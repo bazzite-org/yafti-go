@@ -1,0 +1,28 @@
+package components
+
+templ Layout(title string) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<script src="/static/htmx.min.js"></script>
+			<link rel="stylesheet" href="/static/main.css"/>
+			<title>{ title }</title>
+		</head>
+		<body hx-boost="true">
+			<header>
+				@Navbar([]LinkedLabel{
+					{"Home", "/"},
+					{"About", "/about"},
+				})
+			</header>
+			<main>
+				<div class="p-3">
+					{ children... }
+				</div>
+			</main>
+			<footer></footer>
+		</body>
+	</html>
+}

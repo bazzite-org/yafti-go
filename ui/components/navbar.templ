@@ -1,0 +1,14 @@
+package components
+
+// Pair, first element is label, second is URL
+type LinkedLabel = [2]string
+
+templ Navbar(links []LinkedLabel) {
+	<nav class="navbar">
+		<ul class="menu menu-horizontal">
+			for _, ele := range links {
+				<li><a href={ templ.SafeURL(ele[1]) }>{ ele[0] }</a></li>
+			}
+		</ul>
+	</nav>
+}

@@ -1,0 +1,10 @@
+// Static tasks configuration.
+//
+// Example:
+[
+  {
+    "label": "Run live server",
+    "command": "just dev",
+    "tags": ["debug"]
+  }
+]

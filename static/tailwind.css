@@ -1,0 +1,7 @@
+/* Do not use this file directly.
+This is just used for tailwindcss-cli to generate a main.css file.
+*/
+
+@import "./daisyui.min.css";
+
+@import "tailwindcss";

@@ -1,47 +1,47 @@
 package main
 
 import (
-	"io"
+	"log"
 	"net/http"
-	"text/template"
 
-	. "github.com/Zeglius/yafti-go/internal/consts"
+	"github.com/Zeglius/yafti-go/internal/consts"
+	"github.com/Zeglius/yafti-go/ui/pages"
+	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
-type TemplateRenderer struct {
-	templates *template.Template
-}
-
-func (t *TemplateRenderer) Render(w io.Writer, name string, data any, c echo.Context) error {
-	return t.templates.ExecuteTemplate(w, name, data)
-}
-
-func newTemplateRenderer() *TemplateRenderer {
-	tmpls := template.Must(template.ParseGlob(HTML_TMPL_PATH + "/*.html"))
-	return &TemplateRenderer{tmpls}
-}
-
-type Count struct {
-	Count int
-}
-
 func main() {
-
 	e := echo.New()
+
 	e.Use(middleware.Logger())
-	e.HideBanner = true
 
-	count := Count{0}
-	e.Renderer = newTemplateRenderer()
+	// Set up static file serving
+	e.Static("/static/", "./static")
 
-	e.GET("/", func(c echo.Context) error {
-		count.Count++
-		return c.Render(http.StatusOK, "index", count)
+	// Handle pages routes
+	e.GET("/", echo.WrapHandler(
+		templ.Handler(pages.Home()),
+	))
+
+	e.GET("/about", func(c echo.Context) error {
+		return c.NoContent(http.StatusNotFound)
 	})
 
-	e.Static("/static", "static")
+	e.GET("/_/dummy", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, struct {
+			Name    string   `json:"name"`
+			Age     int      `json:"age"`
+			Hobbies []string `json:"hobbies"`
+		}{
+			Name:    "John Doe",
+			Age:     30,
+			Hobbies: []string{"Reading", "Hiking", "Cooking"},
+		})
+	})
 
-	e.Logger.Fatal(e.Start(":" + PORT))
+	// Start server
+	log.Printf("Server started at http://localhost:%s", consts.PORT)
+
+	e.Logger.Fatal(e.Start(":" + consts.PORT))
 }
