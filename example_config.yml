@@ -1,0 +1,11 @@
+screens:
+  - title: Deck utils
+    actions:
+      - title: Decky loader
+        description: A plugin loader for the Steam Deck
+        default: false
+        script: ujust setup-decky install
+  - title: Additional tweaks
+    actions:
+      - title: Add input group to current user
+        script: sudo -A ujust add-user-to-input-group
