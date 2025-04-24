@@ -40,6 +40,10 @@ func main() {
 		})
 	})
 
+	e.GET("/_/test", echo.WrapHandler(
+		templ.Handler(pages.Test()),
+	))
+
 	// Start server
 	log.Printf("Server started at http://localhost:%s", consts.PORT)
 

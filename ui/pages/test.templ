@@ -1,0 +1,17 @@
+package pages
+
+import "github.com/Zeglius/yafti-go/ui/components"
+
+templ Test() {
+	@components.Layout("Test") {
+		{{ colWidth := "w-2xl" }}
+		<div class="w-full flex gap-3 flex-col items-center">
+			<div class={ colWidth }>
+				<h3 class="text-2xl font-bold">Test Page</h3>
+			</div>
+			<div class={ colWidth }>
+				@components.ActionRunner(components.NewActionJob())
+			</div>
+		</div>
+	}
+}

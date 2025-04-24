@@ -1,0 +1,16 @@
+package components
+
+type ActionJob struct {
+	Script string // Inline shell script to execute
+}
+
+func NewActionJob() ActionJob {
+	return ActionJob{}
+}
+
+// Execute an action and stream the output
+templ ActionRunner(action ActionJob) {
+	<div class="mockup-code w-full">
+		<pre><code>PLACEHOLDER</code></pre>
+	</div>
+}
