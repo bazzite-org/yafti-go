@@ -6,7 +6,7 @@ dev:
     set -emo pipefail
     jobs_pids=()
 
-    tailwindcss --watch -i ./static/tailwind.css -o ./static/main.css &
+    tailwindcss --watch -i ./static/css/tailwind.css -o ./static/css/main.css &
     jobs_pids+=($!)
 
     go tool templ generate --watch --cmd='go run .' &
