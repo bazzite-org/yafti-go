@@ -1,0 +1,70 @@
+package pages
+
+import (
+	"context"
+	"io"
+	"os/exec"
+	"strings"
+)
+
+func runCmd(ctx context.Context, cmd string) chan string {
+	out := make(chan string)
+
+	cmd = strings.Trim(cmd, "\n\r\t")
+
+	com := exec.CommandContext(ctx, "bash", "-c", cmd)
+	stdout, err := com.StdoutPipe()
+	if err != nil {
+		close(out)
+		return out
+	}
+
+	stderr, err := com.StderrPipe()
+	if err != nil {
+		close(out)
+		return out
+	}
+
+	if err := com.Start(); err != nil {
+		close(out)
+		return out
+	}
+
+	go func() {
+		defer close(out)
+
+		combined := io.MultiReader(stdout, stderr)
+		buf := make([]byte, 1024)
+
+		for {
+			n, err := combined.Read(buf)
+			if n > 0 {
+				out <- string(buf[:n])
+			}
+
+			if err != nil {
+				if err != io.EOF {
+					out <- "Error: " + err.Error()
+				}
+				break
+			}
+		}
+
+		com.Wait()
+	}()
+
+	return out
+}
+
+templ Command(cmd string) {
+	{{ data := runCmd(ctx, cmd) }}
+	<div class="mockup-code w-full">
+		for d := range data {
+			for _, d1 := range strings.Split(d, "\n") {
+				@templ.Flush() {
+					<pre><code>{ d1 }</code></pre>
+				}
+			}
+		}
+	</div>
+}

@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"log"
 	"net/http"
-	"os/exec"
 
 	"github.com/Zeglius/yafti-go/internal/consts"
 	"github.com/Zeglius/yafti-go/ui/pages"
@@ -42,77 +40,36 @@ func main() {
 		})
 	})
 
-	e.POST("/_/command", runCommand)
+	e.GET("/_/command", func(c echo.Context) error {
+		// Placeholder
+
+		c.Response().Header().Set(echo.HeaderContentType, "text/event-stream")
+		c.Response().Header().Set(echo.HeaderCacheControl, "no-cache")
+		c.Response().Header().Set(echo.HeaderConnection, "keep-alive")
+
+		handler := templ.Handler(pages.Command(`for f in *; do echo $f; sleep 1; done`), templ.WithStreaming())
+		handler.ServeHTTP(c.Response(), c.Request())
+		return nil
+	})
+
+	e.POST("/_/command", func(c echo.Context) error {
+
+		c.Response().Header().Set(echo.HeaderCacheControl, "no-cache")
+		c.Response().Header().Set(echo.HeaderConnection, "keep-alive")
+
+		cmd := c.FormValue("cmd")
+
+		if cmd == "" {
+			return c.String(http.StatusBadRequest, "Missing \"cmd\" parameter")
+		}
+
+		handler := templ.Handler(pages.Command(cmd), templ.WithStreaming())
+		handler.ServeHTTP(c.Response(), c.Request())
+		return nil
+	})
 
 	// Start server
 	log.Printf("Server started at http://localhost:%s", consts.PORT)
 
 	e.Logger.Fatal(e.Start(":" + consts.PORT))
-}
-
-func runCommand(c echo.Context) error {
-	cmd := c.FormValue("cmd")
-	if cmd == "" {
-		return c.String(http.StatusBadRequest, "No command provided")
-	}
-
-	c.Response().Header().Set(echo.HeaderContentType, "text/event-stream")
-	c.Response().Header().Set("Cache-Control", "no-cache")
-	c.Response().Header().Set("Connection", "keep-alive")
-	c.Response().WriteHeader(http.StatusOK)
-
-	commandParts := []string{"/bin/bash", "-c", cmd}
-	command := commandParts[0]
-	args := commandParts[1:]
-
-	execCmd := exec.Command(command, args...)
-
-	// Get pipes for stdout and stderr
-	stdout, err := execCmd.StdoutPipe()
-	if err != nil {
-		return c.String(http.StatusInternalServerError, "Failed to create stdout pipe: "+err.Error())
-	}
-
-	stderr, err := execCmd.StderrPipe()
-	if err != nil {
-		return c.String(http.StatusInternalServerError, "Failed to create stderr pipe: "+err.Error())
-	}
-
-	if err := execCmd.Start(); err != nil {
-		return c.String(http.StatusInternalServerError, "Failed to start command: "+err.Error())
-	}
-
-	// Create a channel to signal when command completes
-	done := make(chan bool)
-
-	// Stream stdout
-	go func() {
-		scanner := bufio.NewScanner(stdout)
-		for scanner.Scan() {
-			line := scanner.Text()
-			c.Response().Write([]byte(line + "\n"))
-			c.Response().Flush()
-		}
-	}()
-
-	// Stream stderr
-	go func() {
-		scanner := bufio.NewScanner(stderr)
-		for scanner.Scan() {
-			line := scanner.Text()
-			c.Response().Write([]byte(line + "\n"))
-			c.Response().Flush()
-		}
-		done <- true
-	}()
-
-	// Wait for command to finish
-	<-done
-	if err := execCmd.Wait(); err != nil {
-		c.Response().Write([]byte("data: Command execution failed: " + err.Error() + "\n"))
-	}
-
-	c.Response().Flush()
-
-	return nil
 }
