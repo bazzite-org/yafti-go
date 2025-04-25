@@ -47,31 +47,17 @@ func main() {
 		})
 	})
 
-	e.GET("/_/command", func(c echo.Context) error {
-		// Placeholder
-
-		c.Response().Header().Set(echo.HeaderContentType, "text/event-stream")
-		c.Response().Header().Set(echo.HeaderCacheControl, "no-cache")
-		c.Response().Header().Set(echo.HeaderConnection, "keep-alive")
-
-		handler := templ.Handler(pages.Command(`for f in *; do echo $f; sleep 1; done`), templ.WithStreaming())
-		handler.ServeHTTP(c.Response(), c.Request())
-		return nil
-	})
-
-	e.POST("/_/command", func(c echo.Context) error {
-
-		c.Response().Header().Set(echo.HeaderCacheControl, "no-cache")
-		c.Response().Header().Set(echo.HeaderConnection, "keep-alive")
-
-		cmd := c.FormValue("cmd")
-
-		if cmd == "" {
-			return c.String(http.StatusBadRequest, "Missing \"cmd\" parameter")
+	e.POST("/_/apply_changes", func(c echo.Context) error {
+		cmds := []string{
+			`echo "placeholder 1"`,
+			`echo "placeholder 2"`,
+			`echo "placeholder 3"`,
 		}
 
-		handler := templ.Handler(pages.Command(cmd), templ.WithStreaming())
+		handler := newHandler(pages.ApplyChanges(cmds))
+
 		handler.ServeHTTP(c.Response(), c.Request())
+
 		return nil
 	})
 

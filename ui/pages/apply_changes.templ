@@ -1,0 +1,29 @@
+package pages
+
+import (
+	"github.com/Zeglius/yafti-go/ui/components"
+	"strconv"
+)
+
+templ ApplyChanges(cmds []string) {
+	@components.Layout("Apply Changes") {
+		<div>
+			// See: https://templ.guide/server-side-rendering/streaming#declarative-shadow-dom
+			{{ cmds := []string{"for f in *; do echo $f; sleep 1; done", "pwd"} }}
+			<template shadowrootmode="open">
+				for i, cmd := range cmds {
+					{{ id := "cmdout-" + strconv.Itoa(i) }}
+					<slot name={ id }>
+						<div>Loading <code>{ cmd }</code>...</div>
+					</slot>
+				}
+			</template>
+			for i, cmd := range cmds {
+				{{ id := "cmdout-" + strconv.Itoa(i) }}
+				<div slot={ id }>
+					@components.Command(cmd)
+				</div>
+			}
+		</div>
+	}
+}
