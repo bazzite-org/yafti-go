@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"log"
 	"net/http"
 
@@ -18,13 +19,17 @@ func newHandler(c templ.Component, options ...func(*templ.ComponentHandler)) *te
 	return templ.Handler(c, opts...)
 }
 
+//go:embed static/**
+var static embed.FS
+
 func main() {
 	e := echo.New()
 
 	e.Use(middleware.Logger())
 
 	// Set up static file serving
-	e.Static("/static/", "./static")
+	fs := echo.MustSubFS(static, "static")
+	e.StaticFS("/static/", fs)
 
 	// Handle pages routes
 	e.GET("/", echo.WrapHandler(
