@@ -13,10 +13,12 @@ templ Layout(title string) {
 		</head>
 		<body hx-boost="true">
 			<header>
-				@Navbar([]LinkedLabel{
-					{"Home", "/"},
-					{"About", "/about"},
-				})
+				<nav class="navbar">
+					<ul class="menu menu-horizontal">
+						<li><a href="/">Home</a></li>
+						<li><a href="/about">About</a></li>
+					</ul>
+				</nav>
 			</header>
 			<main>
 				<div class="p-3">
