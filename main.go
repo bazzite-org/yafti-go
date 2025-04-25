@@ -11,6 +11,13 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
+// Default [templ.Handler] with streaming enabled by default
+func newHandler(c templ.Component, options ...func(*templ.ComponentHandler)) *templ.ComponentHandler {
+	opts := []func(*templ.ComponentHandler){templ.WithStreaming()}
+	opts = append(opts, options...)
+	return templ.Handler(c, opts...)
+}
+
 func main() {
 	e := echo.New()
 
@@ -21,7 +28,7 @@ func main() {
 
 	// Handle pages routes
 	e.GET("/", echo.WrapHandler(
-		templ.Handler(pages.Home()),
+		newHandler(pages.Home()),
 	))
 
 	e.GET("/about", func(c echo.Context) error {
