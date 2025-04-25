@@ -1,6 +1,9 @@
 package pages
 
-import "github.com/Zeglius/yafti-go/ui/components"
+import (
+	"github.com/Zeglius/yafti-go/config"
+	"github.com/Zeglius/yafti-go/ui/components"
+)
 
 templ Home() {
 	@components.Layout("Home") {
@@ -10,6 +13,28 @@ templ Home() {
 			<div>
 				<span class="btn" hx-get="/_/dummy" hx-swap="outerHTML">Dummy</span>
 			</div>
+			// DEBUG
+			<div class="divider"></div>
+			<div class="max-w-2xl">
+				{{
+					actions := []config.Action{
+						{
+							ID:          "dummy",
+							Title:       "Dummy",
+							Description: "A dummy action",
+						},
+						{
+							ID:          "dummy2",
+							Title:       "Dummy2",
+							Description: "A dummy action",
+						},
+					}
+				}}
+				for _, act := range actions {
+					@components.ActionToggle(act)
+				}
+			</div>
+			// ENDDEBUG
 		</div>
 	}
 }

@@ -8,7 +8,10 @@ package pages
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/Zeglius/yafti-go/ui/components"
+import (
+	"github.com/Zeglius/yafti-go/config"
+	"github.com/Zeglius/yafti-go/ui/components"
+)
 
 func Home() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -43,7 +46,30 @@ func Home() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div><h2 class=\"text-2xl font-bold\">Welcome to Yafti!</h2><p class=\"text-gray-600\">This component is being displayed from home.templ</p><div><span class=\"btn\" hx-get=\"/_/dummy\" hx-swap=\"outerHTML\">Dummy</span></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div><h2 class=\"text-2xl font-bold\">Welcome to Yafti!</h2><p class=\"text-gray-600\">This component is being displayed from home.templ</p><div><span class=\"btn\" hx-get=\"/_/dummy\" hx-swap=\"outerHTML\">Dummy</span></div><div class=\"divider\"></div><div class=\"max-w-2xl\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+
+			actions := []config.Action{
+				{
+					ID:          "dummy",
+					Title:       "Dummy",
+					Description: "A dummy action",
+				},
+				{
+					ID:          "dummy2",
+					Title:       "Dummy2",
+					Description: "A dummy action",
+				},
+			}
+			for _, act := range actions {
+				templ_7745c5c3_Err = components.ActionToggle(act).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -1,0 +1,35 @@
+package components
+
+import (
+	"fmt"
+	"github.com/Zeglius/yafti-go/config"
+	"github.com/labstack/gommon/log"
+)
+
+templ ActionToggle(action config.Action) {
+	{{
+		if action.ID == "" {
+			panic(fmt.Sprintf("action ID is empty: %v", action))
+		} else if action.Title == "" {
+			panic(fmt.Sprintf("action title is empty: %v", action))
+		} else if action.Description == "" {
+			log.Warnf("action description is empty: %v", action)
+		}
+	}}
+	<div class="join items-center gap-1 border border-base-300 p-2 rounded-md w-full">
+		<div class="collapse collapse-arrow bg-base-100">
+			<input type="checkbox"/>
+			<div class="collapse-title font-semibold">
+				{ action.Title }
+			</div>
+			<div class="collapse-content text-sm">
+				{ action.Description }
+			</div>
+		</div>
+		if action.Default {
+			<input type="checkbox" name={ action.ID } value={ action.ID } class="toggle" checked/>
+		} else {
+			<input type="checkbox" name={ action.ID } value={ action.ID } class="toggle"/>
+		}
+	</div>
+}
