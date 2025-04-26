@@ -13,28 +13,33 @@ templ Home() {
 			<div>
 				<span class="btn" hx-get="/_/dummy" hx-swap="outerHTML">Dummy</span>
 			</div>
-			// DEBUG
 			<div class="divider"></div>
-			<div class="max-w-2xl">
+			<div class="container w-2xl mx-auto flex flex-col">
+				// DEBUG
 				{{
-					actions := []config.Action{
-						{
-							ID:          "dummy",
-							Title:       "Dummy",
-							Description: "A dummy action",
-						},
-						{
-							ID:          "dummy2",
-							Title:       "Dummy2",
-							Description: "A dummy action",
-						},
-					}
+						// PLACEHOLDER
+						actions := []config.Action{
+							{
+								ID:          "echo-hello",
+								Title:       "Echo Hello",
+								Description: "Echoes 'hello world'",
+								Script:      `echo hello world`,
+							},
+							{
+								ID:          "ls-files",
+								Title:       "List Files",
+								Description: "Lists files in the current directory",
+								Script:      `ls -l`,
+							},
+						}
 				}}
 				for _, act := range actions {
 					@components.ActionToggle(act)
 				}
+				<button class="btn w-fit" hx-post="/_/post_test" hx-target="next <div.out/>" hx-include="[name='script_ids']">Submit</button>
+				<div class="out"></div>
+				// ENDDEBUG
 			</div>
-			// ENDDEBUG
 		</div>
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"embed"
 	"log"
 	"net/http"
+	"net/url"
 
 	"github.com/Zeglius/yafti-go/internal/consts"
 	"github.com/Zeglius/yafti-go/ui/pages"
@@ -53,6 +54,21 @@ func runServer() error {
 	})
 
 	e.POST("/_/apply_changes", func(c echo.Context) error {
+		// TODO: Use "{script_ids: [<id>]}" to obtain script ids, that we
+		// use to extract scripts contents from a config struct and pass them
+		// as a `[]string` to [pages.ApplyChanges].
+
+		type Payload struct {
+			ScriptIds []string `form:"script_ids"`
+		}
+
+		payload := Payload{}
+		if err := c.Bind(&payload); err != nil {
+			return err
+		}
+
+		// TODO: Replace placeholders with actual values using the payload data
+
 		cmds := []string{
 			`echo "placeholder 1"`,
 			`echo "placeholder 2"`,
@@ -64,6 +80,29 @@ func runServer() error {
 		handler.ServeHTTP(c.Response(), c.Request())
 
 		return nil
+	})
+
+	e.POST("/_/post_test", func(c echo.Context) error {
+		data := struct {
+			POSTParams url.Values        `json:"POST_params"`
+			Cookies    map[string]string `json:"cookies"`
+		}{}
+
+		if v, err := c.FormParams(); err != nil {
+			return c.JSON(http.StatusInternalServerError, err)
+		} else {
+			data.POSTParams = v
+		}
+
+		if c.Cookies() != nil {
+			data.Cookies = make(map[string]string)
+			for _, v := range c.Cookies() {
+				k := v.Name
+				data.Cookies[k] = v.Value
+			}
+		}
+
+		return c.JSON(http.StatusOK, data)
 	})
 
 	// Start server

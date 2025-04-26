@@ -46,21 +46,24 @@ func Home() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div><h2 class=\"text-2xl font-bold\">Welcome to Yafti!</h2><p class=\"text-gray-600\">This component is being displayed from home.templ</p><div><span class=\"btn\" hx-get=\"/_/dummy\" hx-swap=\"outerHTML\">Dummy</span></div><div class=\"divider\"></div><div class=\"max-w-2xl\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div><h2 class=\"text-2xl font-bold\">Welcome to Yafti!</h2><p class=\"text-gray-600\">This component is being displayed from home.templ</p><div><span class=\"btn\" hx-get=\"/_/dummy\" hx-swap=\"outerHTML\">Dummy</span></div><div class=\"divider\"></div><div class=\"container w-2xl mx-auto flex flex-col\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 
+			// PLACEHOLDER
 			actions := []config.Action{
 				{
-					ID:          "dummy",
-					Title:       "Dummy",
-					Description: "A dummy action",
+					ID:          "echo-hello",
+					Title:       "Echo Hello",
+					Description: "Echoes 'hello world'",
+					Script:      `echo hello world`,
 				},
 				{
-					ID:          "dummy2",
-					Title:       "Dummy2",
-					Description: "A dummy action",
+					ID:          "ls-files",
+					Title:       "List Files",
+					Description: "Lists files in the current directory",
+					Script:      `ls -l`,
 				},
 			}
 			for _, act := range actions {
@@ -69,7 +72,7 @@ func Home() templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<button class=\"btn w-fit\" hx-post=\"/_/post_test\" hx-target=\"next &lt;div.out/&gt;\" hx-include=\"[name=&#39;script_ids&#39;]\">Submit</button><div class=\"out\"></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

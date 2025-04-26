@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Zeglius/yafti-go/config"
 	"github.com/labstack/gommon/log"
+	"regexp"
 )
 
 templ ActionToggle(action config.Action) {
@@ -23,13 +24,40 @@ templ ActionToggle(action config.Action) {
 				{ action.Title }
 			</div>
 			<div class="collapse-content text-sm">
-				{ action.Description }
+				<div>{ action.Description }</div>
+				<br/>
+				<div
+					class="link"
+					data-script="on click get next .out then toggle @hidden on result"
+				>Show code</div>
+				<div hidden class="w-full border border-base-300 rounded-lg p-2 out">
+					<pre><code>{ action.Script }</code></pre>
+				</div>
 			</div>
 		</div>
+		{{
+			dataScript := fmt.Sprintf(
+				`set :id to '%s'
+				on click
+					set :old to cookies[:id]
+					if cookies[:id] == 'true' then
+						remove @checked then set cookies[:id] to 'false'
+					else
+						add @checked then set cookies[:id] to 'true'
+					end
+					log "cookies[" + :id + "]: " + :old + " => " + cookies[:id]
+				end
+				on load if cookies[:id] == 'true' then add @checked else remove @checked end`,
+				action.ID,
+			)
+			// Replace newlines and spaces in dataScript with spaces
+			dataScript = regexp.MustCompile(`\n`).ReplaceAllString(dataScript, " ")
+			dataScript = regexp.MustCompile(`\s{2,}`).ReplaceAllString(dataScript, " ")
+		}}
 		if action.Default {
-			<input type="checkbox" name={ action.ID } value={ action.ID } class="toggle" checked/>
+			<input type="checkbox" name="script_ids" value={ action.ID } data-script={ dataScript } class="toggle" checked/>
 		} else {
-			<input type="checkbox" name={ action.ID } value={ action.ID } class="toggle"/>
+			<input type="checkbox" name="script_ids" value={ action.ID } data-script={ dataScript } class="toggle"/>
 		}
 	</div>
 }
