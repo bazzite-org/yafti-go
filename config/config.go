@@ -1,6 +1,12 @@
 package config
 
-import "slices"
+import (
+	"log"
+	"os"
+	"slices"
+
+	"github.com/goccy/go-yaml"
+)
 
 // Action represents a toggable script to be executed on the final screen
 type Action struct {
@@ -62,4 +68,27 @@ type Screen struct {
 // Unmarshaled config file
 type Config struct {
 	Screens []Screen `json:"screens,required"`
+}
+
+func LoadConfig() (*Config, error) {
+	var configPath string
+	if envPath := os.Getenv("YAFTI_CONF"); envPath != "" {
+		configPath = envPath
+	} else {
+		configPath = "/usr/share/yafti/conf.yml"
+	}
+
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		return nil, err
+	}
+	// Log the contents of the config file for debugging
+	log.Printf("Loaded config file contents: %s", string(data))
+
+	var config Config
+	err = yaml.Unmarshal(data, &config)
+	if err != nil {
+		return nil, err
+	}
+	return &config, nil
 }
