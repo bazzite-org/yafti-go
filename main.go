@@ -66,7 +66,7 @@ func runServer() error {
 	})
 
 	e.GET("/action_group/:idx", func(c echo.Context) error {
-		var screen *config.Screen
+		var screen config.Screen
 
 		sId, err := strconv.Atoi(c.Param("idx"))
 		if err != nil {
@@ -76,9 +76,9 @@ func runServer() error {
 		if sId < 0 || sId >= len(conf.Screens) {
 			return echo.NewHTTPError(http.StatusBadRequest, "Invalid screen index")
 		}
-		screen = &conf.Screens[sId]
+		screen = conf.Screens[sId]
 
-		handler := newHandler(pages.ActionGroupScreen(screen.Actions))
+		handler := newHandler(pages.ActionGroupScreen(screen))
 		handler.ServeHTTP(c.Response(), c.Request())
 
 		return nil
