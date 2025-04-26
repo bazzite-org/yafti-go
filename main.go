@@ -22,7 +22,7 @@ func newHandler(c templ.Component, options ...func(*templ.ComponentHandler)) *te
 //go:embed static/**
 var static embed.FS
 
-func main() {
+func runServer() error {
 	e := echo.New()
 
 	e.Use(middleware.Logger())
@@ -69,5 +69,11 @@ func main() {
 	// Start server
 	log.Printf("Server started at http://localhost:%s", consts.PORT)
 
-	e.Logger.Fatal(e.Start(":" + consts.PORT))
+	return e.Start(":" + consts.PORT)
+}
+
+func main() {
+	if err := runServer(); err != nil {
+		log.Fatal(err)
+	}
 }
