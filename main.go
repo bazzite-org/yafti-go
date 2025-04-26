@@ -5,13 +5,25 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 
+	"github.com/Zeglius/yafti-go/config"
 	"github.com/Zeglius/yafti-go/internal/consts"
 	"github.com/Zeglius/yafti-go/ui/pages"
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
+
+var conf *config.Config
+
+func init() {
+	if c, err := config.LoadConfig(); err != nil {
+		panic(err)
+	} else {
+		conf = c
+	}
+}
 
 // Default [templ.Handler] with streaming enabled by default
 func newHandler(c templ.Component, options ...func(*templ.ComponentHandler)) *templ.ComponentHandler {
@@ -51,6 +63,25 @@ func runServer() error {
 			Age:     30,
 			Hobbies: []string{"Reading", "Hiking", "Cooking"},
 		})
+	})
+
+	e.GET("/action_group/:idx", func(c echo.Context) error {
+		var screen *config.Screen
+
+		sId, err := strconv.Atoi(c.Param("idx"))
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "Invalid screen index")
+		}
+
+		if sId < 0 || sId >= len(conf.Screens) {
+			return echo.NewHTTPError(http.StatusBadRequest, "Invalid screen index")
+		}
+		screen = &conf.Screens[sId]
+
+		handler := newHandler(pages.ActionGroupScreen(screen.Actions))
+		handler.ServeHTTP(c.Response(), c.Request())
+
+		return nil
 	})
 
 	e.POST("/_/apply_changes", func(c echo.Context) error {
