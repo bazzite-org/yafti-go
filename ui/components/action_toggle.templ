@@ -5,6 +5,7 @@ import (
 	"github.com/Zeglius/yafti-go/config"
 	"github.com/labstack/gommon/log"
 	"regexp"
+	"strings"
 )
 
 templ ActionToggle(action config.Action) {
@@ -30,8 +31,12 @@ templ ActionToggle(action config.Action) {
 					class="link"
 					data-script="on click get next .out then toggle @hidden on result"
 				>Show code</div>
-				<div hidden class="w-full border border-base-300 rounded-lg p-2 out">
-					<pre><code>{ action.Script }</code></pre>
+				<div hidden class="w-full border border-base-300 p-2 out">
+					for _, line := range strings.Split(action.Script, "\n") {
+						<code class="block -indent-4 pl-4">
+							{ line }
+						</code>
+					}
 				</div>
 			</div>
 		</div>
