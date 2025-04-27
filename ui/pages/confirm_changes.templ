@@ -1,0 +1,19 @@
+package pages
+
+import "github.com/Zeglius/yafti-go/ui/components"
+import "github.com/Zeglius/yafti-go/config"
+
+templ ConfirmChanges(actions []config.Action) {
+	@components.Layout("Confirm changes") {
+		<h2 class="text-2xl font-bold">Confirm changes</h2>
+		<form method="post" hx-include="[name='script_ids']">
+			<input class="btn btn-wide" type="submit" value="Confirm"/>
+		</form>
+		<br/>
+		<div class="container mx-auto flex">
+			for _, act := range actions {
+				@components.ActionToggle(act)
+			}
+		</div>
+	}
+}

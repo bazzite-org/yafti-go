@@ -2,9 +2,11 @@ package main
 
 import (
 	"embed"
+	"encoding/json"
 	"log"
 	"net/http"
 	"net/url"
+	"slices"
 	"strconv"
 
 	"github.com/Zeglius/yafti-go/config"
@@ -75,6 +77,42 @@ func runServer() error {
 		screen = config.ConfStatus.Screens[sId]
 
 		handler := newHandler(pages.ActionGroupScreen(screen))
+		handler.ServeHTTP(c.Response(), c.Request())
+
+		return nil
+	})
+
+	e.GET("/confirm_changes", func(c echo.Context) error {
+		// Step 1: Retrieve script IDs from cookie
+		scriptIdsCookie, err := c.Cookie("script_ids")
+		if err != nil || scriptIdsCookie.Value == "" {
+			c.String(http.StatusBadRequest, "Missing cookie 'script_ids'")
+			return err
+		}
+
+		// Step 2: Parse the JSON from cookie
+		var scriptIdsStrs map[string]string
+		if err := json.Unmarshal([]byte(scriptIdsCookie.Value), &scriptIdsStrs); err != nil {
+			return err
+		}
+
+		// Step 3: Extract selected script IDs (those marked as "true")
+		scriptIds := make([]string, 0, len(scriptIdsStrs))
+		for id, state := range scriptIdsStrs {
+			if state == "true" {
+				scriptIds = append(scriptIds, id)
+			}
+		}
+
+		// Step 4: Sort and remove duplicates
+		slices.Sort(scriptIds)
+		scriptIds = slices.Compact(scriptIds)
+
+		// Step 5: Get actions corresponding to the selected script IDs
+		actions, _ := config.ConfStatus.GetActionsByIds(scriptIds)
+
+		// Step 6: Render the confirmation page with selected actions
+		handler := newHandler(pages.ConfirmChanges(actions))
 		handler.ServeHTTP(c.Response(), c.Request())
 
 		return nil

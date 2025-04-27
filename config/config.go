@@ -1,6 +1,7 @@
 package config
 
 import (
+	"iter"
 	"log"
 	"os"
 	"slices"
@@ -70,6 +71,30 @@ type Screen struct {
 // Unmarshaled config file
 type Config struct {
 	Screens []Screen `json:"screens,required"`
+}
+
+func (c *Config) GetAllActions() iter.Seq[Action] {
+	return func(yield func(Action) bool) {
+		for _, screen := range c.Screens {
+			for _, action := range screen.Actions {
+				if !yield(action) {
+					return
+				}
+			}
+		}
+	}
+}
+
+func (c *Config) GetActionsByIds(ids []string) ([]Action, bool) {
+	res := []Action{}
+	for act := range c.GetAllActions() {
+		for _, id := range ids {
+			if act.ID == id {
+				res = append(res, act)
+			}
+		}
+	}
+	return res, len(res) > 0
 }
 
 func LoadConfig() error {
