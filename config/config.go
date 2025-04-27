@@ -8,6 +8,8 @@ import (
 	"github.com/goccy/go-yaml"
 )
 
+var ConfStatus *Config
+
 // Action represents a toggable script to be executed on the final screen
 type Action struct {
 	ID          string `json:"id,required"`
@@ -70,7 +72,7 @@ type Config struct {
 	Screens []Screen `json:"screens,required"`
 }
 
-func LoadConfig() (*Config, error) {
+func LoadConfig() error {
 	var configPath string
 	if envPath := os.Getenv("YAFTI_CONF"); envPath != "" {
 		configPath = envPath
@@ -80,7 +82,7 @@ func LoadConfig() (*Config, error) {
 
 	data, err := os.ReadFile(configPath)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	// Log the contents of the config file for debugging
 	log.Printf("Loaded config file contents: %s", string(data))
@@ -88,7 +90,9 @@ func LoadConfig() (*Config, error) {
 	var config Config
 	err = yaml.Unmarshal(data, &config)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return &config, nil
+
+	ConfStatus = &config
+	return nil
 }

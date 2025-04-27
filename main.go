@@ -15,13 +15,9 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-var conf *config.Config
-
 func init() {
-	if c, err := config.LoadConfig(); err != nil {
-		panic(err)
-	} else {
-		conf = c
+	if err := config.LoadConfig(); err != nil {
+		log.Panicf("Failed to load config: %v", err)
 	}
 }
 
@@ -73,10 +69,10 @@ func runServer() error {
 			return echo.NewHTTPError(http.StatusBadRequest, "Invalid screen index")
 		}
 
-		if sId < 0 || sId >= len(conf.Screens) {
+		if sId < 0 || sId >= len(config.ConfStatus.Screens) {
 			return echo.NewHTTPError(http.StatusBadRequest, "Invalid screen index")
 		}
-		screen = conf.Screens[sId]
+		screen = config.ConfStatus.Screens[sId]
 
 		handler := newHandler(pages.ActionGroupScreen(screen))
 		handler.ServeHTTP(c.Response(), c.Request())
