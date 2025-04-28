@@ -71,7 +71,104 @@ templ Layout(title string) {
 					display: flex;
 					flex-direction: column;
 				}
+				.theme-toggle {
+					color: white;
+					cursor: pointer;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					margin-left: 10px;
+					width: 40px;
+					height: 40px;
+					border-radius: 50%;
+					transition: background-color 0.2s;
+				}
+				.theme-toggle:hover {
+					background-color: rgba(255, 255, 255, 0.1);
+				}
+				.theme-toggle svg {
+					width: 20px;
+					height: 20px;
+				}
+				
+				/* Dark theme adjustments */
+				[data-theme="dark"] {
+					--bazzite-bg: #121212;
+					--bazzite-text: #f5f5f7;
+				}
+				[data-theme="dark"] body {
+					background-color: var(--bazzite-bg);
+					color: var(--bazzite-text);
+				}
+				[data-theme="dark"] h1, 
+				[data-theme="dark"] h2, 
+				[data-theme="dark"] h3, 
+				[data-theme="dark"] h4, 
+				[data-theme="dark"] h5, 
+				[data-theme="dark"] h6 {
+					color: #f5f5f7;
+				}
+				[data-theme="dark"] p {
+					color: #e1e1e1;
+				}
+				[data-theme="dark"] .container {
+					color: #e1e1e1;
+				}
+				[data-theme="dark"] .card,
+				[data-theme="dark"] .bg-white {
+					background-color: #1e1e1e !important;
+					color: #e1e1e1 !important;
+				}
+				[data-theme="dark"] .card-body {
+					background-color: #1e1e1e;
+					color: #e1e1e1;
+				}
+				[data-theme="dark"] .border {
+					border-color: #333 !important;
+				}
 			</style>
+			<script>
+				// Theme toggle functionality
+				document.addEventListener('DOMContentLoaded', function() {
+					// Check for saved theme
+					const savedTheme = localStorage.getItem('theme') || 'light';
+					document.documentElement.setAttribute('data-theme', savedTheme);
+					
+					// Update toggle icon based on current theme
+					updateThemeIcon(savedTheme);
+					
+					// Set up the theme toggle
+					const themeToggle = document.getElementById('theme-toggle');
+					if (themeToggle) {
+						themeToggle.addEventListener('click', function(e) {
+							e.preventDefault();
+							const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+							const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+							
+							document.documentElement.setAttribute('data-theme', newTheme);
+							localStorage.setItem('theme', newTheme);
+							
+							// Update the icon for the toggle
+							updateThemeIcon(newTheme);
+						});
+					}
+				});
+				
+				function updateThemeIcon(theme) {
+					const moonIcon = document.getElementById('moon-icon');
+					const sunIcon = document.getElementById('sun-icon');
+					
+					if (moonIcon && sunIcon) {
+						if (theme === 'dark') {
+							moonIcon.style.display = 'none';
+							sunIcon.style.display = 'block';
+						} else {
+							moonIcon.style.display = 'block';
+							sunIcon.style.display = 'none';
+						}
+					}
+				}
+			</script>
 			<title>{ title } | Bazzite Portal</title>
 		</head>
 		<body hx-boost="true">
@@ -82,10 +179,18 @@ templ Layout(title string) {
 							<img src="/static/images/logo.png" alt="Bazzite Logo" />
 						</a>
 					</div>
-					<div class="nav-links">
+					<div class="nav-links flex items-center gap-6">
 						<a href="/">Home</a>
 						<a href="https://bazzite.gg" target="_blank">About</a>
 						<a href="https://docs.bazzite.gg" target="_blank">Docs</a>
+						<a id="theme-toggle" class="theme-toggle" href="#" aria-label="Toggle theme">
+							<svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+							</svg>
+							<svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:none;">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+							</svg>
+						</a>
 					</div>
 				</nav>
 			</header>
