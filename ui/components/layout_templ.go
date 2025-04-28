@@ -29,20 +29,20 @@ func Layout(title string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><script src=\"/static/js/htmx.min.js\"></script><link href=\"/static/css/daisyui.css\" rel=\"stylesheet\" type=\"text/css\"><script src=\"/static/js/tailwindcss.js\"></script><script src=\"/static/js/hyperscript.js\"></script><title>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" data-theme=\"light\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><script src=\"/static/js/htmx.min.js\"></script><link href=\"/static/css/daisyui.css\" rel=\"stylesheet\" type=\"text/css\"><script src=\"/static/js/tailwindcss.js\"></script><script src=\"/static/js/hyperscript.js\"></script><style>\n\t\t\t\t:root {\n\t\t\t\t\t--bazzite-purple: #5e43f3;\n\t\t\t\t\t--bazzite-purple-dark: #4935c8;\n\t\t\t\t\t--bazzite-text: #333333;\n\t\t\t\t\t--bazzite-bg: #f5f5f7;\n\t\t\t\t}\n\t\t\t\tbody {\n\t\t\t\t\tfont-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;\n\t\t\t\t\tbackground-color: var(--bazzite-bg);\n\t\t\t\t\tcolor: var(--bazzite-text);\n\t\t\t\t}\n\t\t\t\t.btn-primary {\n\t\t\t\t\tbackground-color: var(--bazzite-purple) !important;\n\t\t\t\t\tborder-color: var(--bazzite-purple) !important;\n\t\t\t\t}\n\t\t\t\t.btn-primary:hover {\n\t\t\t\t\tbackground-color: var(--bazzite-purple-dark) !important;\n\t\t\t\t\tborder-color: var(--bazzite-purple-dark) !important;\n\t\t\t\t}\n\t\t\t\t.navbar {\n\t\t\t\t\tbackground-color: #222222;\n\t\t\t\t\tpadding: 0.5rem 1rem;\n\t\t\t\t}\n\t\t\t\t.navbar a {\n\t\t\t\t\tcolor: white;\n\t\t\t\t}\n\t\t\t\t.logo {\n\t\t\t\t\tdisplay: flex;\n\t\t\t\t\talign-items: center;\n\t\t\t\t\tgap: 0.5rem;\n\t\t\t\t}\n\t\t\t\t.logo-text {\n\t\t\t\t\tfont-weight: bold;\n\t\t\t\t\tfont-size: 1.5rem;\n\t\t\t\t\tcolor: white;\n\t\t\t\t}\n\t\t\t</style><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components/layout.templ`, Line: 13, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/components/layout.templ`, Line: 51, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title></head><body hx-boost=\"true\"><header><nav class=\"navbar\"><ul class=\"menu menu-horizontal\"><li><a href=\"/\">Home</a></li><li><a href=\"/about\">About</a></li></ul></nav></header><main><div class=\"p-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " | Bazzite Portal</title></head><body hx-boost=\"true\"><header><nav class=\"navbar flex justify-between\"><div class=\"logo\"><svg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"20\" cy=\"20\" r=\"20\" fill=\"#5e43f3\"></circle> <path d=\"M20 10 L25 15 L25 25 L15 25 L15 15 Z\" fill=\"white\"></path></svg> <span class=\"logo-text\">bazzite</span></div><div><ul class=\"menu menu-horizontal\"><li><a href=\"/\">Home</a></li><li><a href=\"/about\">About</a></li></ul></div></nav></header><main class=\"container mx-auto max-w-4xl\"><div class=\"p-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -50,7 +50,7 @@ func Layout(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></main><footer></footer></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></main><footer class=\"p-6 text-center text-gray-500 text-sm\"><p>Bazzite Portal • Powered by Yafti-Go</p></footer></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

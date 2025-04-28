@@ -10,12 +10,23 @@ import (
 // One is assigned per each element at `screens.[]` in the config file.
 templ ActionGroupScreen(screen config.Screen) {
 	@components.Layout(screen.Title) {
-		<div class="container max-w-2xl mx-auto flex flex-col">
-			<h2 class="text-2xl font-bold">{ screen.Title }</h2>
-			<p class="text-gray-600"></p>
-			for _, act := range screen.Actions {
-				@components.ActionToggle(act)
-			}
+		<div class="container max-w-2xl mx-auto flex flex-col my-8">
+			<div class="mb-8">
+				<h2 class="text-3xl font-bold mb-2">{ screen.Title }</h2>
+				<p class="text-gray-600">Select the options you'd like to install</p>
+			</div>
+
+			<div class="bg-white rounded-lg shadow-md p-6">
+				<form hx-post="/confirm_changes" hx-target="body" class="flex flex-col gap-4">
+					for _, act := range screen.Actions {
+						@components.ActionToggle(act)
+					}
+					<div class="flex justify-between mt-6">
+						<a href="/" class="btn btn-outline">Back to Home</a>
+						<button type="submit" class="btn btn-primary">Continue</button>
+					</div>
+				</form>
+			</div>
 		</div>
 	}
 }

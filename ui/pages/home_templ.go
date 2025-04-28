@@ -11,6 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"github.com/Zeglius/yafti-go/config"
 	"github.com/Zeglius/yafti-go/ui/components"
+	"strconv"
 )
 
 func Home() templ.Component {
@@ -46,33 +47,46 @@ func Home() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div><h2 class=\"text-2xl font-bold\">Welcome to Yafti!</h2><p class=\"text-gray-600\">This component is being displayed from home.templ</p><div><span class=\"btn\" hx-get=\"/_/dummy\" hx-swap=\"outerHTML\">Dummy</span></div><div class=\"divider\"></div><div class=\"container w-2xl mx-auto flex flex-col\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"my-12\"><h1 class=\"text-4xl font-bold mb-2\">Welcome to Yafti!</h1><p class=\"text-gray-600 text-lg mb-12\">Please select a configuration screen to begin</p><div class=\"flex flex-col gap-4\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-
-			// PLACEHOLDER
-			actions := []config.Action{
-				{
-					ID:          "echo-hello",
-					Title:       "Echo Hello",
-					Description: "Echoes 'hello world'",
-					Script:      `echo hello world`,
-				},
-				{
-					ID:          "ls-files",
-					Title:       "List Files",
-					Description: "Lists files in the current directory",
-					Script:      `ls -l`,
-				},
-			}
-			for _, act := range actions {
-				templ_7745c5c3_Err = components.ActionToggle(act).Render(ctx, templ_7745c5c3_Buffer)
+			if len(config.ConfStatus.Screens) > 0 {
+				for i, screen := range config.ConfStatus.Screens {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<a href=\"")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var3 templ.SafeURL = templ.SafeURL("/action_group/" + strconv.Itoa(i))
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var3)))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" class=\"btn btn-primary py-5 text-xl font-medium text-white\">")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var4 string
+					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(screen.Title)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/pages/home.templ`, Line: 19, Col: 21}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</a>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"bg-amber-100 border-l-4 border-amber-500 text-amber-700 p-4 rounded\"><p>No screens found in configuration. Please check your YAML file.</p></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<button class=\"btn w-fit\" hx-post=\"/_/post_test\" hx-target=\"next &lt;div.out/&gt;\" hx-include=\"[name=&#39;script_ids&#39;]\">Submit</button><div class=\"out\"></div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
