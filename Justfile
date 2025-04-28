@@ -56,4 +56,4 @@ rebuild-all:
     @echo "=== Rebuilding application ==="
     go build -o yafti-go
     @echo "=== Running application with yafti.yml ==="
-    env YAFTI_CONF=$PWD/yafti.yml ./yafti-go
+    go tool templ generate --watch --cmd="env YAFTI_CONF=$PWD/yafti.yml go run ."
