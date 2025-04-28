@@ -8,15 +8,17 @@ import (
 
 templ Home() {
 	@components.Layout("Home") {
-		<div class="my-12 text-center">
-			<h1 class="text-5xl font-bold mb-2">Welcome to Yafti!</h1>
-			<p class="text-gray-600 text-xl mb-16">Please select a configuration screen to begin</p>
+		<div class="flex flex-col min-h-[calc(100vh-120px)] justify-center">
+			<div class="text-center mb-10 mt-12">
+				<h1 class="text-5xl font-bold mb-2 text-gray-800">Welcome to Bazzite!</h1>
+				<p class="text-gray-600 text-lg">Please select a configuration screen to begin</p>
+			</div>
 			
-			<div class="flex flex-col gap-4 max-w-2xl mx-auto">
+			<div class="flex flex-col gap-3 max-w-md mx-auto w-full px-4">
 				if len(config.ConfStatus.Screens) > 0 {
 					for i, screen := range config.ConfStatus.Screens {
 						<a href={ templ.SafeURL("/action_group/" + strconv.Itoa(i)) } 
-						   class="btn btn-lg rounded-lg py-6 border-none bg-[#5e43f3] hover:bg-[#4935c8] text-white font-medium text-xl text-center">
+						   class="h-14 flex items-center justify-center rounded-lg border-none bg-[#6446fa] hover:bg-[#5639e0] text-white font-medium text-center transition-all duration-200">
 							{ screen.Title }
 						</a>
 					}
@@ -26,8 +28,10 @@ templ Home() {
 					</div>
 				}
 			</div>
-
-			<p class="text-gray-500 text-sm mt-16">Bazzite Portal • Powered by Yafti-Go</p>
+			
+			<div class="mt-auto text-center text-gray-500 text-xs py-4">
+				<p>Bazzite Portal • Powered by Yafti-Go</p>
+			</div>
 		</div>
 	}
 }

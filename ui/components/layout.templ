@@ -12,8 +12,8 @@ templ Layout(title string) {
 			<script src="/static/js/hyperscript.js"></script>
 			<style>
 				:root {
-					--bazzite-purple: #5e43f3;
-					--bazzite-purple-dark: #4935c8;
+					--bazzite-purple: #6446fa;
+					--bazzite-purple-dark: #5639e0;
 					--bazzite-text: #333333;
 					--bazzite-bg: #f5f5f7;
 				}
@@ -22,6 +22,9 @@ templ Layout(title string) {
 					background-color: var(--bazzite-bg);
 					color: var(--bazzite-text);
 					padding-top: 60px; /* Add padding to prevent content from hiding under the sticky header */
+					min-height: 100vh;
+					display: flex;
+					flex-direction: column;
 				}
 				.btn-primary {
 					background-color: var(--bazzite-purple) !important;
@@ -34,16 +37,18 @@ templ Layout(title string) {
 				.navbar {
 					background-color: #222222;
 					padding: 0.5rem 1rem;
+					height: 60px;
 				}
 				.navbar a {
 					color: white;
+					font-weight: normal;
 				}
 				.logo {
 					display: flex;
 					align-items: center;
 				}
 				.logo img {
-					height: 40px;
+					height: 32px;
 					width: auto;
 				}
 				.sticky-header {
@@ -54,34 +59,41 @@ templ Layout(title string) {
 					z-index: 1000;
 					box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 				}
+				.nav-links {
+					display: flex;
+					gap: 24px;
+				}
+				.nav-links a {
+					text-decoration: none;
+				}
+				main {
+					flex: 1;
+					display: flex;
+					flex-direction: column;
+				}
 			</style>
 			<title>{ title } | Bazzite Portal</title>
 		</head>
 		<body hx-boost="true">
 			<header class="sticky-header">
-				<nav class="navbar flex justify-between">
+				<nav class="navbar flex justify-between items-center">
 					<div class="logo">
 						<a href="/">
 							<img src="/static/images/logo.png" alt="Bazzite Logo" />
 						</a>
 					</div>
-					<div>
-						<ul class="menu menu-horizontal">
-							<li><a href="/">Home</a></li>
-							<li><a href="https://bazzite.gg" target="_blank">About</a></li>
-							<li><a href="https://docs.bazzite.gg" target="_blank">Docs</a></li>
-						</ul>
+					<div class="nav-links">
+						<a href="/">Home</a>
+						<a href="https://bazzite.gg" target="_blank">About</a>
+						<a href="https://docs.bazzite.gg" target="_blank">Docs</a>
 					</div>
 				</nav>
 			</header>
-			<main class="container mx-auto max-w-4xl">
-				<div class="p-6">
+			<main>
+				<div class="container mx-auto">
 					{ children... }
 				</div>
 			</main>
-			<footer class="p-6 text-center text-gray-500 text-sm">
-				<p>Bazzite Portal • Powered by Yafti-Go</p>
-			</footer>
 		</body>
 	</html>
 }
