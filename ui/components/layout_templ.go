@@ -42,7 +42,7 @@ func Layout(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " | Bazzite Portal</title></head><body hx-boost=\"true\"><header class=\"sticky-header\"><nav class=\"navbar flex justify-between\"><div class=\"logo\"><img src=\"/static/images/logo.png\" alt=\"Bazzite Logo\"></div><div><ul class=\"menu menu-horizontal\"><li><a href=\"/\">Home</a></li><li><a href=\"/about\">About</a></li></ul></div></nav></header><main class=\"container mx-auto max-w-4xl\"><div class=\"p-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " | Bazzite Portal</title></head><body hx-boost=\"true\"><header class=\"sticky-header\"><nav class=\"navbar flex justify-between\"><div class=\"logo\"><a href=\"/\"><img src=\"/static/images/logo.png\" alt=\"Bazzite Logo\"></a></div><div><ul class=\"menu menu-horizontal\"><li><a href=\"/\">Home</a></li><li><a href=\"/about\">About</a></li></ul></div></nav></header><main class=\"container mx-auto max-w-4xl\"><div class=\"p-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
