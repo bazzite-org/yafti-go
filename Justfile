@@ -3,7 +3,7 @@ default:
 
 # Run dev server with live template reloading
 dev:
-    go tool templ generate --watch --cmd="env YAFTI_CONF=$PWD/example_config.yml go run ."
+    go tool templ generate --watch --cmd="env YAFTI_CONF=$PWD/yafti.yml go run ."
 
 # Run with custom config file
 run config="yafti.yml":
@@ -37,3 +37,23 @@ clean:
 deps:
     go mod tidy
     go install github.com/a-h/templ/cmd/templ@latest
+
+# full clean and rebuild and deploy for bazzite example script
+bazzite-full:
+    just clean
+    just bazzite-build
+
+# Complete rebuild: clean, regenerate templates, build and run with yafti.yml
+rebuild-all:
+    @echo "=== Cleaning build artifacts ==="
+    just clean
+    @echo "=== Removing generated templ files ==="
+    find ./ui -name "*_templ.go" -delete
+    @echo "=== Installing templ tool if needed ==="
+    go install github.com/a-h/templ/cmd/templ@latest
+    @echo "=== Regenerating templ files ==="
+    $(go env GOPATH)/bin/templ generate
+    @echo "=== Rebuilding application ==="
+    go build -o yafti-go
+    @echo "=== Running application with yafti.yml ==="
+    env YAFTI_CONF=$PWD/yafti.yml ./yafti-go

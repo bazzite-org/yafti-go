@@ -118,26 +118,93 @@ func runServer() error {
 		return nil
 	})
 
-	e.POST("/_/apply_changes", func(c echo.Context) error {
-		// TODO: Use "{script_ids: [<id>]}" to obtain script ids, that we
-		// use to extract scripts contents from a config struct and pass them
-		// as a `[]string` to [pages.ApplyChanges].
+	// Update POST handler for confirm_changes
+	e.POST("/confirm_changes", func(c echo.Context) error {
+		var scriptIdsStrs map[string]string
+		
+		// First try to get data from form submission
+		formValue := c.FormValue("scriptIds")
+		if formValue != "" {
+			if err := json.Unmarshal([]byte(formValue), &scriptIdsStrs); err == nil {
+				// Successfully got data from form submission
+				log.Println("Using script IDs from form data")
+			}
+		}
+		
+		// If that didn't work, fall back to cookie
+		if scriptIdsStrs == nil {
+			scriptIdsCookie, cookieErr := c.Cookie("script_ids")
+			if cookieErr == nil && scriptIdsCookie.Value != "" {
+				if err := json.Unmarshal([]byte(scriptIdsCookie.Value), &scriptIdsStrs); err == nil {
+					// Successfully got data from cookie
+					log.Println("Using script IDs from cookie")
+				} else {
+					log.Printf("Error parsing cookie value: %v", err)
+				}
+			} else {
+				log.Printf("Cookie error or empty: %v", cookieErr)
+			}
+		}
+		
+		// If we still don't have data, return error
+		if scriptIdsStrs == nil {
+			return c.String(http.StatusBadRequest, "No script IDs found in form data or cookies")
+		}
 
+		// Continue with the existing logic
+		scriptIds := make([]string, 0, len(scriptIdsStrs))
+		for id, state := range scriptIdsStrs {
+			if state == "true" {
+				scriptIds = append(scriptIds, id)
+			}
+		}
+
+		slices.Sort(scriptIds)
+		scriptIds = slices.Compact(scriptIds)
+
+		actions, _ := config.ConfStatus.GetActionsByIds(scriptIds)
+
+		handler := newHandler(pages.ConfirmChanges(actions))
+		handler.ServeHTTP(c.Response(), c.Request())
+
+		return nil
+	})
+
+	e.POST("/_/apply_changes", func(c echo.Context) error {
+		// Get script IDs from the request payload
 		type Payload struct {
 			ScriptIds []string `form:"script_ids"`
 		}
 
 		payload := Payload{}
 		if err := c.Bind(&payload); err != nil {
-			return err
+			log.Printf("Failed to bind payload: %v", err)
+			return c.String(http.StatusBadRequest, "Invalid request format")
 		}
 
-		// TODO: Replace placeholders with actual values using the payload data
+		if len(payload.ScriptIds) == 0 {
+			log.Printf("No script IDs provided in request")
+			return c.String(http.StatusBadRequest, "No script IDs provided")
+		}
 
-		cmds := []string{
-			`echo "placeholder 1"`,
-			`echo "placeholder 2"`,
-			`echo "placeholder 3"`,
+		// Get actions corresponding to the script IDs
+		actions, found := config.ConfStatus.GetActionsByIds(payload.ScriptIds)
+		if !found || len(actions) == 0 {
+			log.Printf("No actions found for the provided script IDs")
+			return c.String(http.StatusBadRequest, "No actions found for the provided script IDs")
+		}
+
+		// Extract script commands from the actions
+		cmds := make([]string, 0, len(actions))
+		for _, action := range actions {
+			if action.Script != "" {
+				cmds = append(cmds, action.Script)
+			}
+		}
+
+		if len(cmds) == 0 {
+			log.Printf("No scripts found in the selected actions")
+			return c.String(http.StatusBadRequest, "Selected actions contain no scripts to execute")
 		}
 
 		handler := newHandler(pages.ApplyChanges(cmds))

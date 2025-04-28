@@ -62,7 +62,7 @@ func ActionGroupScreen(screen config.Screen) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h2><p class=\"text-gray-600\">Select the options you'd like to install</p></div><div class=\"bg-white rounded-lg shadow-md p-6\"><form hx-post=\"/confirm_changes\" hx-target=\"body\" class=\"flex flex-col gap-4\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</h2><p class=\"text-gray-600\">Select the options you'd like to install</p></div><div class=\"bg-white rounded-lg shadow-md p-6\"><form id=\"actionForm\" method=\"POST\" action=\"/confirm_changes\" class=\"flex flex-col gap-4\"><input type=\"hidden\" id=\"scriptIdsInput\" name=\"scriptIds\" value=\"{}\"> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -72,7 +72,7 @@ func ActionGroupScreen(screen config.Screen) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"flex justify-between mt-6\"><a href=\"/\" class=\"btn btn-outline\">Back to Home</a> <button type=\"submit\" class=\"btn btn-primary\">Continue</button></div></form></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"flex justify-between mt-6\"><a href=\"/\" class=\"btn btn-outline\">Back to Home</a> <button type=\"button\" class=\"btn btn-primary\" onclick=\"prepareAndSubmit()\">Continue</button></div></form></div></div><script>\n\t\t\tfunction prepareAndSubmit() {\n\t\t\t\t// Build a JSON object for selected actions\n\t\t\t\tconst selectedActions = {};\n\t\t\t\tdocument.querySelectorAll('input[type=\"checkbox\"][name=\"script_ids\"]').forEach(checkbox => {\n\t\t\t\t\tselectedActions[checkbox.value] = checkbox.checked ? 'true' : 'false';\n\t\t\t\t});\n\n\t\t\t\t// Set the cookie with the JSON data\n\t\t\t\tdocument.cookie = \"script_ids=\" + JSON.stringify(selectedActions) + \"; path=/; SameSite=Strict\";\n\t\t\t\t\n\t\t\t\t// Also include the data in the form submission\n\t\t\t\tdocument.getElementById('scriptIdsInput').value = JSON.stringify(selectedActions);\n\t\t\t\t\n\t\t\t\t// Submit the form\n\t\t\t\tdocument.getElementById('actionForm').submit();\n\t\t\t}\n\t\t</script>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -159,7 +159,7 @@ screens:
         description: "Live TV streaming service"
         default: false
         script: "ujust get-webapp \"YouTube TV\""
-  - title: "Application Installation"
+  - title: "Customizations and Tweaks"
     actions:
       - id: "add-input-group"
         title: "Add input group to current user"

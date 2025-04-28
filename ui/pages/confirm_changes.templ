@@ -29,7 +29,15 @@ templ ConfirmChanges(actions []config.Action) {
 					</div>
 				</div>
 				
-				<form method="post" action="/_/apply_changes" hx-include="[name='script_ids']" class="flex flex-col">
+				<form method="post" action="/_/apply_changes" class="flex flex-col">
+					<!-- Hidden input to store script IDs -->
+					if len(actions) > 0 {
+						<input type="hidden" name="script_ids" value={ actions[0].ID } />
+						for i := 1; i < len(actions); i++ {
+							<input type="hidden" name="script_ids" value={ actions[i].ID } />
+						}
+					}
+
 					<div class="flex justify-between mt-6">
 						<a href="/" class="btn btn-outline">Back to Home</a>
 						<button type="submit" class="btn btn-primary">Install Selected Items</button>
