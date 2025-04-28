@@ -47,7 +47,7 @@ func Home() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"my-12\"><h1 class=\"text-4xl font-bold mb-2\">Welcome to Yafti!</h1><p class=\"text-gray-600 text-lg mb-12\">Please select a configuration screen to begin</p><div class=\"flex flex-col gap-4\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"my-12 text-center\"><h1 class=\"text-5xl font-bold mb-2\">Welcome to Yafti!</h1><p class=\"text-gray-600 text-xl mb-16\">Please select a configuration screen to begin</p><div class=\"flex flex-col gap-4 max-w-2xl mx-auto\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -62,14 +62,14 @@ func Home() templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" class=\"btn btn-primary py-5 text-xl font-medium text-white\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" class=\"btn btn-lg rounded-lg py-6 border-none bg-[#5e43f3] hover:bg-[#4935c8] text-white font-medium text-xl text-center\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var4 string
 					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(screen.Title)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/pages/home.templ`, Line: 19, Col: 21}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/pages/home.templ`, Line: 20, Col: 21}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 					if templ_7745c5c3_Err != nil {
@@ -86,7 +86,7 @@ func Home() templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><p class=\"text-gray-500 text-sm mt-16\">Bazzite Portal • Powered by Yafti-Go</p></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
