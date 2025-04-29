@@ -10,7 +10,6 @@ templ ConfirmChanges(actions []config.Action) {
 				<h2 class="text-3xl font-bold mb-2">Confirm Your Selections</h2>
 				<p class="text-gray-600">Review the following items before installation</p>
 			</div>
-
 			<div class="bg-white rounded-lg shadow-md p-6">
 				<div class="mb-6">
 					<h3 class="text-lg font-medium mb-4">Selected Items:</h3>
@@ -28,16 +27,14 @@ templ ConfirmChanges(actions []config.Action) {
 						}
 					</div>
 				</div>
-				
-				<form method="post" action="/_/apply_changes" class="flex flex-col">
+				<form method="post" action="/_/apply_changes" hx-boost="unset" class="flex flex-col">
 					<!-- Hidden input to store script IDs -->
 					if len(actions) > 0 {
-						<input type="hidden" name="script_ids" value={ actions[0].ID } />
+						<input type="hidden" name="script_ids" value={ actions[0].ID }/>
 						for i := 1; i < len(actions); i++ {
-							<input type="hidden" name="script_ids" value={ actions[i].ID } />
+							<input type="hidden" name="script_ids" value={ actions[i].ID }/>
 						}
 					}
-
 					<div class="flex justify-between mt-6">
 						<a href="/" class="btn btn-outline">Back to Home</a>
 						<button type="submit" class="btn btn-primary">Install Selected Items</button>
