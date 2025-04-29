@@ -58,13 +58,17 @@ func runCmd(ctx context.Context, cmd string) chan string {
 
 templ Command(cmd string) {
 	{{ data := runCmd(ctx, cmd) }}
-	<div class="mockup-code w-full">
-		for d := range data {
-			for _, d1 := range strings.Split(d, "\n") {
-				@templ.Flush() {
-					<pre><code>{ d1 }</code></pre>
+	<div class="w-full">
+		<div class="text-violet-300 mb-1">$ { cmd }</div>
+		<div class="text-gray-200">
+			for d := range data {
+				for _, d1 := range strings.Split(d, "\n") {
+					@templ.Flush() {
+						<div class="whitespace-pre-wrap">{ d1 }</div>
+					}
 				}
 			}
-		}
+		</div>
+		<div class="border-t border-gray-700 mt-2 pt-2 text-green-400">Command completed ✓</div>
 	</div>
 }

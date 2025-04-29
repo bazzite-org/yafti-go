@@ -1,0 +1,14 @@
+title: "Simple Yafti Setup"
+screens:
+  - title: "First Screen"
+    actions:
+      - id: "test1"
+        title: "Test Action 1"
+        description: "This is a test action"
+        default: true
+        script: "echo 'Test action 1 executed'"
+      - id: "test2"
+        title: "Test Action 2"
+        description: "Another test action"
+        default: false
+        script: "echo 'Test action 2 executed'"

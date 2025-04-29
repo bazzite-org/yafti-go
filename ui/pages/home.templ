@@ -3,42 +3,34 @@ package pages
 import (
 	"github.com/Zeglius/yafti-go/config"
 	"github.com/Zeglius/yafti-go/ui/components"
+	"strconv"
 )
 
 templ Home() {
 	@components.Layout("Home") {
-		<div>
-			<h2 class="text-2xl font-bold">Welcome to Yafti!</h2>
-			<p class="text-gray-600">This component is being displayed from home.templ</p>
-			<div>
-				<span class="btn" hx-get="/_/dummy" hx-swap="outerHTML">Dummy</span>
+		<div class="flex flex-col min-h-[calc(100vh-120px)] justify-center">
+			<div class="text-center mb-10 mt-12">
+				<h1 class="text-5xl font-bold mb-2 text-gray-800">Welcome to Bazzite!</h1>
+				<p class="text-gray-600 text-lg">Please select a configuration screen to begin</p>
 			</div>
-			<div class="divider"></div>
-			<div class="container w-2xl mx-auto flex flex-col">
-				// DEBUG
-				{{
-						// PLACEHOLDER
-						actions := []config.Action{
-							{
-								ID:          "echo-hello",
-								Title:       "Echo Hello",
-								Description: "Echoes 'hello world'",
-								Script:      `echo hello world`,
-							},
-							{
-								ID:          "ls-files",
-								Title:       "List Files",
-								Description: "Lists files in the current directory",
-								Script:      `ls -l`,
-							},
-						}
-				}}
-				for _, act := range actions {
-					@components.ActionToggle(act)
+			
+			<div class="flex flex-col gap-3 max-w-md mx-auto w-full px-4">
+				if len(config.ConfStatus.Screens) > 0 {
+					for i, screen := range config.ConfStatus.Screens {
+						<a href={ templ.SafeURL("/action_group/" + strconv.Itoa(i)) } 
+						   class="h-14 flex items-center justify-center rounded-lg border-none bg-[#6446fa] hover:bg-[#5639e0] text-white font-medium text-center transition-all duration-200">
+							{ screen.Title }
+						</a>
+					}
+				} else {
+					<div class="bg-amber-100 border-l-4 border-amber-500 text-amber-700 p-4 rounded">
+						<p>No screens found in configuration. Please check your YAML file.</p>
+					</div>
 				}
-				<button class="btn w-fit" hx-post="/_/post_test" hx-target="next <div.out/>" hx-include="[name='script_ids']">Submit</button>
-				<div class="out"></div>
-				// ENDDEBUG
+			</div>
+			
+			<div class="mt-auto text-center text-gray-500 text-xs py-4">
+				<p>Bazzite Portal • Powered by Yafti-Go</p>
 			</div>
 		</div>
 	}

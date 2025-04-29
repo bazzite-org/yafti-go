@@ -102,7 +102,7 @@ func LoadConfig() error {
 	if envPath := os.Getenv("YAFTI_CONF"); envPath != "" {
 		configPath = envPath
 	} else {
-		configPath = "/usr/share/yafti/conf.yml"
+		configPath = "/Users/kurt/Developer/yafti-go/yafti.yml"
 	}
 
 	data, err := os.ReadFile(configPath)
