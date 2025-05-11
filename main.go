@@ -22,12 +22,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func init() {
-	if err := config.LoadConfig(); err != nil {
-		log.Panicf("Failed to load config: %v", err)
-	}
-}
-
 // Default [templ.Handler] with streaming enabled by default
 func newHandler(c templ.Component, options ...func(*templ.ComponentHandler)) *templ.ComponentHandler {
 	opts := []func(*templ.ComponentHandler){templ.WithStreaming()}

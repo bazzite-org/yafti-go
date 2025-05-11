@@ -9,6 +9,12 @@ import (
 	"github.com/goccy/go-yaml"
 )
 
+func init() {
+	if err := LoadConfig(); err != nil {
+		log.Panicf("Failed to load config: %v", err)
+	}
+}
+
 var ConfStatus *Config
 
 // Action represents a toggable script to be executed on the final screen
