@@ -33,7 +33,7 @@
 
 3. Run with default config
    ```bash
-   export YAFTI_CONF="$(pwd)/yafti.yml"
+   export YAFTI_CONF="$(pwd)/yafti.yml" YAFTI_EXEC_WRAPPER="flatpak run org.mozilla.firefox --kiosk --new-instance %u"
    go run main.go
    ```
 

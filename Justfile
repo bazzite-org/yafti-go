@@ -1,3 +1,5 @@
+export YAFTI_EXEC_WRAPPER := "flatpak run org.mozilla.firefox --kiosk --new-instance %u"
+
 default:
     @just --list
 

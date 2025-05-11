@@ -1,13 +1,18 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"encoding/json"
 	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
+	"os"
+	"os/exec"
 	"slices"
 	"strconv"
+	"strings"
 
 	"github.com/Zeglius/yafti-go/config"
 	"github.com/Zeglius/yafti-go/internal/consts"
@@ -33,7 +38,7 @@ func newHandler(c templ.Component, options ...func(*templ.ComponentHandler)) *te
 //go:embed static/**
 var static embed.FS
 
-func runServer() error {
+func newServer() *echo.Echo {
 	e := echo.New()
 
 	e.Use(middleware.Logger())
@@ -121,7 +126,7 @@ func runServer() error {
 	// Update POST handler for confirm_changes
 	e.POST("/confirm_changes", func(c echo.Context) error {
 		var scriptIdsStrs map[string]string
-		
+
 		// First try to get data from form submission
 		formValue := c.FormValue("scriptIds")
 		if formValue != "" {
@@ -130,7 +135,7 @@ func runServer() error {
 				log.Println("Using script IDs from form data")
 			}
 		}
-		
+
 		// If that didn't work, fall back to cookie
 		if scriptIdsStrs == nil {
 			scriptIdsCookie, cookieErr := c.Cookie("script_ids")
@@ -145,7 +150,7 @@ func runServer() error {
 				log.Printf("Cookie error or empty: %v", cookieErr)
 			}
 		}
-		
+
 		// If we still don't have data, return error
 		if scriptIdsStrs == nil {
 			return c.String(http.StatusBadRequest, "No script IDs found in form data or cookies")
@@ -240,11 +245,56 @@ func runServer() error {
 	// Start server
 	log.Printf("Server started at http://localhost:%s", consts.PORT)
 
-	return e.Start(":" + consts.PORT)
+	return e
 }
 
 func main() {
-	if err := runServer(); err != nil {
-		log.Fatal(err)
+	// Get the wrapper command from environment variables
+	// If YAFTI_EXEC_WRAPPER is set, the server will be started and the wrapper command will be executed
+	cmd := os.Getenv("YAFTI_EXEC_WRAPPER")
+
+	server := http.Server{
+		Addr:    ":" + consts.PORT,
+		Handler: newServer(),
 	}
+
+	// If no wrapper command is provided, just run the server directly...
+	if cmd == "" {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatal(err)
+		}
+		return
+	}
+
+	// ... else, we start the server and execute the wrapper command
+	cmd = strings.ReplaceAll(cmd, "%u", "http://localhost:"+consts.PORT)
+	// Start the server and execute the wrapper command in separate goroutines
+	// If any of these stop, stop all goroutines
+	ctx, cancelCtx := context.WithCancel(context.Background())
+	defer cancelCtx()
+
+	// Start the server
+	go func() {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			slog.Error("Error starting server", "error", err)
+		}
+		return
+	}()
+
+	// Execute the wrapper command
+	go func() {
+		defer cancelCtx()
+		c := exec.Command("sh", "-c", cmd)
+		if err := c.Run(); err != nil {
+			slog.Error("Error executing wrapper command", "error", err)
+		}
+		return
+	}()
+
+	// Listen for context cancellation to shut down the server
+	<-ctx.Done()
+	if err := server.Shutdown(context.Background()); err != nil {
+		log.Printf("Error shutting down server: %v", err)
+	}
+
 }

@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Bazzite Portal
+Type=Application
+Exec=env YAFTI_EXEC_WRAPPER="flatpak run org.mozilla.firefox --kiosk --new-instance %u" yafti
