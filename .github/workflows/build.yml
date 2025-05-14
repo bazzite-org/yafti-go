@@ -2,8 +2,8 @@ name: Build and Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - '**'
   workflow_dispatch:
 
 jobs:
@@ -27,8 +27,8 @@ jobs:
           chmod +x install.sh
           tar -czf yafti-go-bundle.tar.gz yafti-go yafti.yml static install.sh
 
-      - name: Create Release
-        id: create_release
+      - name: Create tagged release
+        id: create_tagged_release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
@@ -38,9 +38,9 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload Latest Release
+      - name: Upload to latest release
         uses: softprops/action-gh-release@v1
-        if: github.event_name == 'workflow_dispatch'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         with:
           files: |
             yafti-go-bundle.tar.gz
