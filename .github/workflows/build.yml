@@ -3,7 +3,9 @@ name: Build and Release
 on:
   push:
     branches:
-      - '**'
+      - 'main'
+      - 'master'
+      - 'build-package'
   workflow_dispatch:
 
 jobs:
@@ -11,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -27,24 +31,40 @@ jobs:
           chmod +x install.sh
           tar -czf yafti-go-bundle.tar.gz yafti-go yafti.yml static install.sh
 
+      - name: Generate timestamp for tag
+        id: timestamp
+        run: echo "timestamp=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+
+      - name: Create and push latest tag
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/build-package'
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          TAG_NAME="latest-${{ steps.timestamp.outputs.timestamp }}"
+          git tag -f $TAG_NAME
+          git tag -f latest
+          git push -f origin $TAG_NAME
+          git push -f origin latest
+
+      - name: Create release with assets
+        uses: softprops/action-gh-release@v1
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/build-package'
+        with:
+          files: |
+            yafti-go-bundle.tar.gz
+            yafti-go
+          draft: false
+          prerelease: false
+          tag_name: latest-${{ steps.timestamp.outputs.timestamp }}
+          name: "Latest Build (${{ steps.timestamp.outputs.timestamp }})"
+
       - name: Create tagged release
         id: create_tagged_release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/') && !startsWith(github.ref, 'refs/tags/latest')
         with:
           files: |
             yafti-go-bundle.tar.gz
             yafti-go
           draft: false
           prerelease: false
-
-      - name: Upload to latest release
-        uses: softprops/action-gh-release@v1
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-        with:
-          files: |
-            yafti-go-bundle.tar.gz
-            yafti-go
-          draft: false
-          prerelease: false
-          tag_name: latest
