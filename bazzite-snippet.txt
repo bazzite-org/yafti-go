@@ -5,7 +5,7 @@ RUN --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=tmpfs,dst=/tmp \
     mkdir -p /tmp/yafti-go && \
-    curl -L https://github.com/Zeglius/yafti-go/releases/download/latest/yafti-go-bundle.tar.gz -o /tmp/yafti-go-bundle.tar.gz && \
+    curl -L https://github.com/xXJSONDeruloXx/yafti-go/releases/download/latest/yafti-go-bundle.tar.gz -o /tmp/yafti-go-bundle.tar.gz && \
     tar -xzf /tmp/yafti-go-bundle.tar.gz -C /tmp/yafti-go && \
     cd /tmp/yafti-go && \
     ./install.sh && \
