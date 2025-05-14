@@ -1,9 +1,10 @@
 # Minimal yafti-go installation
-RUN curl -sL https://github.com/xXJSONDeruloXx/yafti-go/releases/download/latest/yafti-go-bundle.tar.gz | \
-    tar -xz && \
-    ./install.sh && \
-    systemctl enable yafti-go.service && \
-    rm -rf yafti-go* && \
+RUN curl -sL https://github.com/xXJSONDeruloXx/yafti-go/releases/download/latest/yafti-go-bundle.tar.gz -o /tmp/yafti-go-bundle.tar.gz && \
+    mkdir -p /tmp/yafti-go && \
+    tar -xzf /tmp/yafti-go-bundle.tar.gz -C /tmp/yafti-go && \
+    cd /tmp/yafti-go && \
+    bash ./install.sh && \
+    rm -rf /tmp/yafti-go /tmp/yafti-go-bundle.tar.gz && \
     /cleanup
 
 # Alternative method if you want to build from source directly in the container:
