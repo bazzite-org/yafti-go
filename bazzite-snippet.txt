@@ -1,0 +1,32 @@
+# Snippet to add to your Bazzite Containerfile to include yafti-go
+
+# Download and install yafti-go
+RUN --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
+    --mount=type=tmpfs,dst=/tmp \
+    mkdir -p /tmp/yafti-go && \
+    curl -L https://github.com/Zeglius/yafti-go/releases/download/latest/yafti-go-bundle.tar.gz -o /tmp/yafti-go-bundle.tar.gz && \
+    tar -xzf /tmp/yafti-go-bundle.tar.gz -C /tmp/yafti-go && \
+    cd /tmp/yafti-go && \
+    ./install.sh && \
+    mkdir -p /lib/systemd/system && \
+    cp /usr/share/yafti-go/systemd/yafti-go.service /lib/systemd/system/ && \
+    systemctl enable yafti-go.service && \
+    rm -rf /tmp/yafti-go /tmp/yafti-go-bundle.tar.gz && \
+    /cleanup
+
+# Alternative method if you want to build from source directly in the container:
+# RUN --mount=type=cache,dst=/var/cache \
+#     --mount=type=cache,dst=/var/log \
+#     --mount=type=tmpfs,dst=/tmp \
+#     dnf -y install golang git && \
+#     git clone https://github.com/Zeglius/yafti-go.git /tmp/yafti-go && \
+#     cd /tmp/yafti-go && \
+#     go build -o yafti-go && \
+#     ./install.sh && \
+#     mkdir -p /lib/systemd/system && \
+#     cp /usr/share/yafti-go/systemd/yafti-go.service /lib/systemd/system/ && \
+#     systemctl enable yafti-go.service && \
+#     dnf -y remove golang git && \
+#     rm -rf /tmp/yafti-go && \
+#     /cleanup
