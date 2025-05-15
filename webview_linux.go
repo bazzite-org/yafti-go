@@ -1,3 +1,4 @@
+//go:build webview
 // +build webview
 
 package main
@@ -6,7 +7,7 @@ import (
 	"log"
 
 	"github.com/Zeglius/yafti-go/internal/consts"
-	"github.com/webview/webview"
+	"github.com/wailsapp/webview"
 )
 
 // RunWebView starts a webview window for the application

@@ -14,7 +14,7 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	// Import webview conditionally using build tags
-	"github.com/webview/webview"
+	"github.com/wailsapp/webview"
 )
 
 //go:embed static/**
