@@ -94,6 +94,7 @@ This project uses:
 - [HTMX](https://htmx.org/) - Dynamic HTML updates
 - [DaisyUI](https://daisyui.com/) - UI components
 - [TailwindCSS](https://tailwindcss.com/) - CSS framework
+- [WebView](https://github.com/webview/webview) - Embedded WebView for standalone UI
 
 ### Common Commands
 
@@ -112,8 +113,23 @@ just run myconfigfile.yml
 # Run with the Bazzite configuration
 just bazzite
 
-# Build the application
+# Build the standard application
 just build
+
+# Build the WebView version
+just webview-build
+
+# Run the WebView version
+just webview-run
+
+# Build Flatpak package
+just flatpak-build
+
+# Install the Flatpak package
+just flatpak-install
+
+# Run the Flatpak
+just flatpak-run
 
 # Generate templ files
 just templ
