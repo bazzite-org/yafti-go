@@ -11,8 +11,10 @@ import (
 
 	"github.com/Zeglius/yafti-go/internal/consts"
 	srv "github.com/Zeglius/yafti-go/server"
-	"github.com/webview/webview"
 	"golang.org/x/sync/errgroup"
+
+	// Import webview conditionally using build tags
+	"github.com/webview/webview"
 )
 
 //go:embed static/**

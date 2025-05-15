@@ -17,7 +17,7 @@
 
 - Go 1.21 or later
 - Just command runner (optional, but recommended)
-- For WebView build on Linux: `libwebkit2gtk-4.0-dev` and `libgtk-3-dev`
+- For WebView build on Linux: `libwebkit2gtk-4.1-dev` and `libgtk-3-dev`
 
 ### Quick Start
 

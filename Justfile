@@ -15,6 +15,14 @@ run config="yafti.yml":
 build:
     go build -o yafti-go
 
+# Build with WebView support
+build-webview:
+    go build -o yafti-go-gui -tags webview
+
+# Run with WebView interface
+run-webview config="yafti.yml":
+    env YAFTI_CONF=$PWD/{{config}} YAFTI_USE_WEBVIEW=true go run -tags webview .
+
 # Generate templ files
 templ:
     templ generate

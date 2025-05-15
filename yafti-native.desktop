@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Bazzite Portal (Native)
+Comment=First boot configuration for Bazzite with built-in UI
+Type=Application
+Exec=env YAFTI_USE_WEBVIEW=true yafti-go-gui
+Icon=org.mozilla.firefox
+Categories=System;Settings;
