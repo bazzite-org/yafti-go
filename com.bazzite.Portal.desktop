@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Bazzite Portal
+Comment=Bazzite OS Installation & Configuration Tool
+Exec=bazzite-portal
+Icon=com.bazzite.Portal
+Terminal=false
+Type=Application
+Categories=System;Settings;
+StartupNotify=true
+X-Flatpak=com.bazzite.Portal

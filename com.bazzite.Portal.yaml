@@ -1,0 +1,53 @@
+app-id: com.bazzite.Portal
+runtime: org.freedesktop.Platform
+runtime-version: '23.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.golang
+command: bazzite-portal
+finish-args:
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --share=network
+  - --talk-name=org.freedesktop.portal.Desktop
+  - --talk-name=org.freedesktop.Flatpak
+  - --filesystem=xdg-config/bazzite:create
+  - --filesystem=host:ro
+modules:
+  - name: webkitgtk
+    buildsystem: meson
+    sources:
+      - type: archive
+        url: https://webkitgtk.org/releases/webkitgtk-2.42.0.tar.xz
+        sha256: a851ba75e78db399a8116091b5b7a84d6dac6c97c3a37f8cf3670cb2d9b1bb7c
+  
+  - name: bazzite-portal
+    buildsystem: simple
+    build-options:
+      env:
+        - PATH=/usr/lib/sdk/golang/bin:${PATH}
+        - GOBIN=/app/bin
+        - GOPATH=/tmp/go
+        - GOCACHE=/tmp/.cache
+    build-commands:
+      # Install Go dependencies
+      - cd ${FLATPAK_BUILDER_BUILDDIR} && go mod download
+      - cd ${FLATPAK_BUILDER_BUILDDIR} && go get github.com/webview/webview
+      # Install templ for code generation
+      - cd ${FLATPAK_BUILDER_BUILDDIR} && go install github.com/a-h/templ/cmd/templ@latest
+      # Generate templ files
+      - cd ${FLATPAK_BUILDER_BUILDDIR} && ${GOBIN}/templ generate
+      # Build the application
+      - cd ${FLATPAK_BUILDER_BUILDDIR} && go build -o /app/bin/bazzite-portal ./cmd/webview
+      # Copy assets
+      - mkdir -p /app/share/bazzite-portal
+      - cp -r ${FLATPAK_BUILDER_BUILDDIR}/static /app/share/bazzite-portal/
+      - cp ${FLATPAK_BUILDER_BUILDDIR}/yafti.yml /app/share/bazzite-portal/
+      # Install desktop file and icon
+      - mkdir -p /app/share/applications
+      - cp ${FLATPAK_BUILDER_BUILDDIR}/com.bazzite.Portal.desktop /app/share/applications/
+      - mkdir -p /app/share/icons/hicolor/256x256/apps
+      - cp ${FLATPAK_BUILDER_BUILDDIR}/static/images/logo.png /app/share/icons/hicolor/256x256/apps/com.bazzite.Portal.png
+    sources:
+      - type: dir
+        path: .

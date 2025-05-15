@@ -57,6 +57,12 @@ func (s *Server) heartbeatHandler(c echo.Context) error {
 }
 
 func (s *Server) monitorHeartbeat() {
+	// If running in WebView mode, don't monitor heartbeat (don't auto-shutdown)
+	if consts.IsWebViewMode {
+		log.Printf("Running in WebView mode, heartbeat monitoring disabled")
+		return
+	}
+
 	ticker := time.NewTicker(5 * time.Second)
 	defer ticker.Stop()
 
@@ -84,6 +90,11 @@ func (s *Server) Start() error {
 	e := s.e
 
 	e.Use(middleware.Logger())
+
+	// Add a health check endpoint for the webview to confirm server is ready
+	e.GET("/health", func(c echo.Context) error {
+		return c.String(http.StatusOK, "OK")
+	})
 
 	// Set up static file serving
 	if s.StaticAssets == nil {

@@ -28,13 +28,24 @@ jobs:
       - name: Install templ
         run: go install github.com/a-h/templ/cmd/templ@latest
 
+      - name: Install WebView dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev
+
+      - name: Install flatpak-builder
+        run: |
+          sudo apt-get install -y flatpak flatpak-builder
+          flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
       - name: Generate templ files
         run: go tool templ generate
 
-      - name: Build binary
+      - name: Build binaries
         run: |
           go mod tidy
           go build -o yafti-go -ldflags="-s -w" .
+          go build -o yafti-go-webview -ldflags="-s -w" ./cmd/webview
 
       - name: Generate timestamp for tag
         id: timestamp
@@ -51,12 +62,19 @@ jobs:
           git push -f origin $TAG_NAME
           git push -f origin latest
 
+      - name: Build Flatpak
+        run: |
+          flatpak-builder --repo=repo --force-clean build-dir com.bazzite.Portal.yaml
+          flatpak build-bundle repo bazzite-portal.flatpak com.bazzite.Portal
+
       - name: Create release with assets
         uses: softprops/action-gh-release@v1
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/build-package'
         with:
           files: |
             yafti-go
+            yafti-go-webview
+            bazzite-portal.flatpak
           draft: false
           prerelease: false
           tag_name: latest-${{ steps.timestamp.outputs.timestamp }}
@@ -69,5 +87,7 @@ jobs:
         with:
           files: |
             yafti-go
+            yafti-go-webview
+            bazzite-portal.flatpak
           draft: false
           prerelease: false

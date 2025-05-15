@@ -9,3 +9,7 @@ const (
 	// If it is not, shutdown the server.
 	HEARTBEAT_SECONDS = 30
 )
+
+// IsWebViewMode is set to true when running in the embedded WebView
+// to disable the automatic server shutdown
+var IsWebViewMode bool = false

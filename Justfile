@@ -33,7 +33,7 @@ bazzite-build:
 
 # Clean build artifacts
 clean:
-    rm -f yafti-go
+    rm -f yafti-go yafti-go-webview bazzite-portal.flatpak
 
 # Install dependencies
 deps:
@@ -59,3 +59,24 @@ rebuild-all:
     go build -o yafti-go
     @echo "=== Running application with yafti.yml ==="
     go tool templ generate --watch --cmd="env YAFTI_CONF=$PWD/yafti.yml go run ."
+
+# Build WebView version
+webview-build:
+    go build -o yafti-go-webview ./cmd/webview
+
+# Run WebView version
+webview-run: webview-build
+    env YAFTI_CONF=$PWD/yafti.yml ./yafti-go-webview
+
+# Build Flatpak package
+flatpak-build:
+    flatpak-builder --repo=repo --force-clean build-dir com.bazzite.Portal.yaml
+    flatpak build-bundle repo bazzite-portal.flatpak com.bazzite.Portal
+
+# Install Flatpak
+flatpak-install:
+    flatpak-builder --user --install --force-clean build-dir com.bazzite.Portal.yaml
+
+# Run Flatpak
+flatpak-run:
+    flatpak run com.bazzite.Portal

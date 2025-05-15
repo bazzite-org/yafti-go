@@ -5,10 +5,11 @@
 
 ## Features
 
-- **Web-based Interface**: Access the installer through your browser at http://localhost:3169
+- **Web-based Interface**: Access the installer through your browser or the integrated WebView
 - **Configurable**: Define your installation options in YAML configuration files
 - **Visual Selection**: Easily choose which components to install with toggle switches
 - **Command Execution**: Runs installation commands with real-time output display
+- **Multiple Deployment Options**: Run as a standalone binary, with an external browser, or as a self-contained Flatpak
 
 ## Installation
 
@@ -38,6 +39,32 @@
    ```
 
 4. Access the web interface at http://localhost:3169
+
+### Flatpak Version
+
+The Flatpak version includes an integrated WebView, so no external browser is required.
+
+1. Download the Flatpak bundle from the latest release
+2. Install it:
+   ```bash
+   flatpak install --user bazzite-portal.flatpak
+   ```
+3. Run the app:
+   ```bash
+   flatpak run com.bazzite.Portal
+   ```
+
+### WebView Version
+
+The WebView version provides a standalone window with no external browser dependency:
+
+```bash
+# Build the WebView version
+go build -o yafti-go-webview ./cmd/webview
+
+# Run the WebView version
+YAFTI_CONF="$(pwd)/yafti.yml" ./yafti-go-webview
+```
 
 ## Configuration
 
