@@ -6,7 +6,8 @@
 ## Features
 
 - **Web-based Interface**: Access the installer through your browser at http://localhost:3169
-- **Standalone GUI**: Use the built-in WebView interface without an external browser
+- **Standalone GUI**: Use the built-in WebView interface without an external browser (Linux)
+- **No External Dependencies**: The WebView version doesn't require a separate browser
 - **Configurable**: Define your installation options in YAML configuration files
 - **Visual Selection**: Easily choose which components to install with toggle switches
 - **Command Execution**: Runs installation commands with real-time output display
@@ -35,7 +36,14 @@
 
    For WebView support on Linux:
    ```bash
-   sudo apt-get install -y libwebkit2gtk-4.0-dev libgtk-3-dev
+   # Ubuntu/Debian
+   sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev
+   
+   # Fedora
+   sudo dnf install -y webkit2gtk4.1-devel gtk3-devel
+   
+   # Or use the provided setup script
+   ./webview-setup.sh
    ```
 
 3. Run with default config

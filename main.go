@@ -13,8 +13,7 @@ import (
 	srv "github.com/Zeglius/yafti-go/server"
 	"golang.org/x/sync/errgroup"
 
-	// Import webview conditionally using build tags
-	"github.com/wailsapp/webview"
+	// Webview is imported conditionally via build tags in the platform-specific files
 )
 
 //go:embed static/**
@@ -49,13 +48,8 @@ func main() {
 
 	// If webview is enabled, use that and ignore wrapper command
 	if useWebview {
-		log.Println("Starting WebView UI")
-		w := webview.New(true)
-		defer w.Destroy()
-		w.SetTitle("Yafti")
-		w.SetSize(1024, 768, webview.HintNone)
-		w.Navigate("http://localhost:" + consts.PORT)
-		w.Run()
+		// Call the platform-specific implementation
+		RunWebView()
 		return
 	}
 

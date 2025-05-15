@@ -67,13 +67,25 @@ jobs:
           git push -f origin $TAG_NAME
           git push -f origin latest
 
+      - name: Prepare release assets
+        run: |
+          mkdir -p release
+          cp yafti-go release/
+          cp yafti-go-gui release/
+          cp yafti.desktop release/
+          cp yafti-native.desktop release/
+          cp webview-setup.sh release/
+
       - name: Create release with assets
         uses: softprops/action-gh-release@v1
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/build-package'
         with:
           files: |
-            yafti-go
-            yafti-go-gui
+            release/yafti-go
+            release/yafti-go-gui
+            release/yafti.desktop
+            release/yafti-native.desktop
+            release/webview-setup.sh
           draft: false
           prerelease: false
           tag_name: latest-${{ steps.timestamp.outputs.timestamp }}
