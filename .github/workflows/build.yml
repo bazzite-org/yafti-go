@@ -64,8 +64,8 @@ jobs:
 
       - name: Build Flatpak
         run: |
-          flatpak-builder --user --repo=repo --force-clean build-dir com.bazzite.Portal.yaml
-          flatpak --user build-bundle repo bazzite-portal.flatpak com.bazzite.Portal
+          sudo flatpak-builder --repo=repo --force-clean build-dir com.bazzite.Portal.yaml
+          sudo flatpak build-bundle repo bazzite-portal.flatpak com.bazzite.Portal
 
       - name: Create release with assets
         uses: softprops/action-gh-release@v1
