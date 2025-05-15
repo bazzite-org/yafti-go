@@ -1,6 +1,7 @@
 title: Bazzite Portal
 screens:
   - title: "Setting up Bazzite"
+    description: "Core system components and utilities"
     actions:
       - id: "decky-loader"
         title: "Decky Loader"
@@ -53,6 +54,7 @@ screens:
         default: false
         script: "ujust install-resilio-sync"
   - title: "Media Applications"
+    description: "Entertainment and streaming services"
     actions:
       - id: "xbox-cloud-gaming"
         title: "Xbox Cloud Gaming"
@@ -160,6 +162,7 @@ screens:
         default: false
         script: "ujust get-webapp \"YouTube TV\""
   - title: "Customizations and Tweaks"
+    description: "System configurations and enhancements"
     actions:
       - id: "add-input-group"
         title: "Add input group to current user"
