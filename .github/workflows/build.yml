@@ -36,7 +36,7 @@ jobs:
       - name: Install flatpak-builder
         run: |
           sudo apt-get install -y flatpak flatpak-builder
-          flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
       - name: Generate templ files
         run: go tool templ generate
@@ -65,7 +65,7 @@ jobs:
       - name: Build Flatpak
         run: |
           flatpak-builder --user --repo=repo --force-clean build-dir com.bazzite.Portal.yaml
-          flatpak build-bundle repo bazzite-portal.flatpak com.bazzite.Portal
+          flatpak --user build-bundle repo bazzite-portal.flatpak com.bazzite.Portal
 
       - name: Create release with assets
         uses: softprops/action-gh-release@v1
