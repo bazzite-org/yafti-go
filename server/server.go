@@ -98,7 +98,7 @@ func (s *Server) Start() error {
 
 	// Set up static file serving
 	if s.StaticAssets == nil {
-		// When running in webview mode without embedded files, 
+		// When running in webview mode without embedded files,
 		// serve static files from the filesystem
 		if consts.IsWebViewMode {
 			e.Static("/static/", "static")

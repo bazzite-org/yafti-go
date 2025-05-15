@@ -46,7 +46,15 @@ jobs:
           go mod tidy
           go get github.com/webview/webview_go@latest
           go build -o yafti-go -ldflags="-s -w" .
+          
+          # Need to set PKG_CONFIG_PATH for WebKit 4.1
+          export PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/share/pkgconfig"
+          # Force WebView to use webkit2gtk-4.1 instead of 4.0
+          pkg-config --cflags -- gtk+-3.0 webkit2gtk-4.1 || true
+          CGO_CFLAGS="`pkg-config --cflags gtk+-3.0 webkit2gtk-4.1`" \
+          CGO_LDFLAGS="`pkg-config --libs gtk+-3.0 webkit2gtk-4.1`" \
           go build -o yafti-go-webview -ldflags="-s -w" ./cmd/webview
+          
           # Create a wrapper script for the webview binary
           cat > yafti-go-webview-wrapper.sh << 'EOF'
           #!/bin/bash
