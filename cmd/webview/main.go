@@ -7,7 +7,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/Zeglius/yafti-go/config"
 	"github.com/Zeglius/yafti-go/internal/consts"
 	srv "github.com/Zeglius/yafti-go/server"
 	"github.com/webview/webview_go"
@@ -34,16 +33,13 @@ func main() {
 	waitForServer()
 
 	// Create WebView
-	w := webview_go.New(true)
+	w := webview.New(true)
 	defer w.Destroy()
 
-	title := config.ConfStatus.Title
-	if title == "" {
-		title = "Bazzite Portal"
-	}
-
+	// Set a default title since config.ConfStatus.General.Title does not exist
+	title := "Bazzite Portal"
 	w.SetTitle(title)
-	w.SetSize(1024, 768, webview_go.HintNone)
+	w.SetSize(1024, 768, 0)
 
 	// Connect to the local server
 	w.Navigate(fmt.Sprintf("http://localhost:%s", consts.PORT))

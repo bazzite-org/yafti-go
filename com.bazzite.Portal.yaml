@@ -14,12 +14,23 @@ finish-args:
   - --filesystem=xdg-config/bazzite:create
   - --filesystem=host:ro
 modules:
-  - name: webkitgtk
-    buildsystem: meson
+  - name: webkit
     sources:
-      - type: archive
-        url: https://webkitgtk.org/releases/webkitgtk-2.42.0.tar.xz
-        sha256: a851ba75e78db399a8116091b5b7a84d6dac6c97c3a37f8cf3670cb2d9b1bb7c
+      - type: git
+        url: https://github.com/WebKit/WebKit.git
+        tag: webkitgtk-2.40.5
+        commit: 9872c7f3d0a5c68a9319718a9dcd6f4fa56c7dd5
+    modules:
+      - name: webkitgtk-4.0
+        buildsystem: simple
+        build-commands:
+          - mkdir -p /usr/lib/pkgconfig
+          - cp webkit2gtk-4.0.pc /usr/lib/pkgconfig/
+
+        sources:
+          - type: file
+            path: webkit2gtk-4.0.pc
+            dest-filename: webkit2gtk-4.0.pc
   
   - name: bazzite-portal
     buildsystem: simple
@@ -29,16 +40,17 @@ modules:
         - GOBIN=/app/bin
         - GOPATH=/tmp/go
         - GOCACHE=/tmp/.cache
+        - PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/share/pkgconfig:/app/lib/pkgconfig
     build-commands:
       # Install Go dependencies
       - cd ${FLATPAK_BUILDER_BUILDDIR} && go mod download
-      - cd ${FLATPAK_BUILDER_BUILDDIR} && go get github.com/webview/webview
+      - cd ${FLATPAK_BUILDER_BUILDDIR} && go get github.com/webview/webview_go@latest
       # Install templ for code generation
       - cd ${FLATPAK_BUILDER_BUILDDIR} && go install github.com/a-h/templ/cmd/templ@latest
       # Generate templ files
       - cd ${FLATPAK_BUILDER_BUILDDIR} && ${GOBIN}/templ generate
-      # Build the application
-      - cd ${FLATPAK_BUILDER_BUILDDIR} && go build -o /app/bin/bazzite-portal ./cmd/webview
+      # Build the application with explicitly set WebKit flags
+      - cd ${FLATPAK_BUILDER_BUILDDIR} && CGO_ENABLED=1 CGO_CFLAGS="`pkg-config --cflags gtk+-3.0 webkit2gtk-4.0`" CGO_LDFLAGS="`pkg-config --libs gtk+-3.0 webkit2gtk-4.0`" go build -o /app/bin/bazzite-portal ./cmd/webview
       # Copy assets
       - mkdir -p /app/share/bazzite-portal
       - cp -r ${FLATPAK_BUILDER_BUILDDIR}/static /app/share/bazzite-portal/
