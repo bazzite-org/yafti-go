@@ -20,15 +20,17 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: '1.21'
+          
+      - name: Install templ
+        run: go install github.com/a-h/templ/cmd/templ@latest
+
+      - name: Generate templ files
+        run: go tool templ generate
 
       - name: Build binary
         run: |
           go mod tidy
           go build -o yafti-go -ldflags="-s -w" .
-
-      - name: Create bundle
-        run: |
-          tar -czf yafti-go-bundle.tar.gz yafti-go yafti.yml static
 
       - name: Generate timestamp for tag
         id: timestamp
@@ -50,7 +52,6 @@ jobs:
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/build-package'
         with:
           files: |
-            yafti-go-bundle.tar.gz
             yafti-go
           draft: false
           prerelease: false
@@ -63,7 +64,6 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/') && !startsWith(github.ref, 'refs/tags/latest')
         with:
           files: |
-            yafti-go-bundle.tar.gz
             yafti-go
           draft: false
           prerelease: false
