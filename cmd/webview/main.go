@@ -1,7 +1,6 @@
 package main
 
 import (
-	"embed"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,11 +10,8 @@ import (
 	"github.com/Zeglius/yafti-go/config"
 	"github.com/Zeglius/yafti-go/internal/consts"
 	srv "github.com/Zeglius/yafti-go/server"
-	webview "github.com/webview/webview_go"
+	"github.com/webview/webview_go"
 )
-
-//go:embed ../../static/**
-var static embed.FS
 
 func main() {
 	// Enable WebView mode to prevent auto-shutdown
@@ -24,8 +20,8 @@ func main() {
 	// Instantiate server
 	server := srv.New()
 
-	// Load static assets
-	server.StaticAssets = &static
+	// We'll handle static assets in the server.go file directly
+	// from the filesystem since we don't embed them here
 
 	// Start server in a goroutine
 	go func() {

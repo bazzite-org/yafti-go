@@ -44,10 +44,20 @@ jobs:
       - name: Build binaries
         run: |
           go mod tidy
-          # Make sure we're using webview_go package
           go get github.com/webview/webview_go@latest
           go build -o yafti-go -ldflags="-s -w" .
           go build -o yafti-go-webview -ldflags="-s -w" ./cmd/webview
+          # Create a wrapper script for the webview binary
+          cat > yafti-go-webview-wrapper.sh << 'EOF'
+          #!/bin/bash
+          # Get the directory of this script
+          DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+          cd "$DIR"
+          # Run the webview binary
+          export YAFTI_CONF="${DIR}/yafti.yml"
+          ./yafti-go-webview
+          EOF
+          chmod +x yafti-go-webview-wrapper.sh
 
       - name: Generate timestamp for tag
         id: timestamp
@@ -69,13 +79,24 @@ jobs:
           sudo flatpak-builder --repo=repo --force-clean build-dir com.bazzite.Portal.yaml
           sudo flatpak build-bundle repo bazzite-portal.flatpak com.bazzite.Portal
 
+      - name: Prepare webview release package
+        run: |
+          # Create a directory for the webview package
+          mkdir -p yafti-webview-package
+          cp yafti-go-webview yafti-webview-package/
+          cp yafti-go-webview-wrapper.sh yafti-webview-package/
+          cp -r static yafti-webview-package/
+          cp yafti.yml yafti-webview-package/
+          # Create a zip archive
+          zip -r yafti-webview-package.zip yafti-webview-package
+
       - name: Create release with assets
         uses: softprops/action-gh-release@v1
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/build-flatpak'
         with:
           files: |
             yafti-go
-            yafti-go-webview
+            yafti-webview-package.zip
             bazzite-portal.flatpak
           draft: false
           prerelease: false
@@ -89,7 +110,7 @@ jobs:
         with:
           files: |
             yafti-go
-            yafti-go-webview
+            yafti-webview-package.zip
             bazzite-portal.flatpak
           draft: false
           prerelease: false

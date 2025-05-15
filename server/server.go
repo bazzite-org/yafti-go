@@ -98,10 +98,17 @@ func (s *Server) Start() error {
 
 	// Set up static file serving
 	if s.StaticAssets == nil {
-		return errors.New("StaticAssets is not populated. Ensure it is set in main.go")
+		// When running in webview mode without embedded files, 
+		// serve static files from the filesystem
+		if consts.IsWebViewMode {
+			e.Static("/static/", "static")
+		} else {
+			return errors.New("StaticAssets is not populated. Ensure it is set in main.go")
+		}
+	} else {
+		fs := echo.MustSubFS(*s.StaticAssets, "static")
+		e.StaticFS("/static/", fs)
 	}
-	fs := echo.MustSubFS(*s.StaticAssets, "static")
-	e.StaticFS("/static/", fs)
 
 	// Handle heartbeat, so we shutdown the server automatically
 	// when there is no client connected over a period of time.
