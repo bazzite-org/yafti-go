@@ -59,3 +59,16 @@ rebuild-all:
     go build -o yafti-go
     @echo "=== Running application with yafti.yml ==="
     go tool templ generate --watch --cmd="env YAFTI_CONF=$PWD/yafti.yml go run ."
+
+# Run with WebView interface
+run-webview config="yafti.yml":
+    env YAFTI_CONF=$PWD/{{config}} YAFTI_USE_WEBVIEW=true go run .
+
+# Build with WebView support
+build-webview:
+    go build -o yafti-go-gui -tags webview
+
+# Build both standard and WebView versions
+build-all:
+    go build -o yafti-go
+    go build -o yafti-go-gui -tags webview

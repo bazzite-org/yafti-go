@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Bazzite Portal GUI
+Type=Application
+Exec=env YAFTI_CONF=/etc/yafti/yafti.yml YAFTI_USE_WEBVIEW=true yafti-go-gui
+Icon=/usr/share/yafti/static/images/logo.png
+Comment=Bazzite First Boot Setup Tool (GUI)
+Categories=System;Settings;

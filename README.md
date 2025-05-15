@@ -6,6 +6,7 @@
 ## Features
 
 - **Web-based Interface**: Access the installer through your browser at http://localhost:3169
+- **Standalone GUI**: Use the built-in WebView interface without an external browser
 - **Configurable**: Define your installation options in YAML configuration files
 - **Visual Selection**: Easily choose which components to install with toggle switches
 - **Command Execution**: Runs installation commands with real-time output display
@@ -16,6 +17,7 @@
 
 - Go 1.21 or later
 - Just command runner (optional, but recommended)
+- For WebView build on Linux: `libwebkit2gtk-4.0-dev` and `libgtk-3-dev`
 
 ### Quick Start
 
@@ -31,13 +33,25 @@
    go install github.com/a-h/templ/cmd/templ@latest
    ```
 
+   For WebView support on Linux:
+   ```bash
+   sudo apt-get install -y libwebkit2gtk-4.0-dev libgtk-3-dev
+   ```
+
 3. Run with default config
    ```bash
+   # Browser-based version
    export YAFTI_CONF="$(pwd)/yafti.yml" YAFTI_EXEC_WRAPPER="flatpak run org.mozilla.firefox --kiosk --new-instance %u"
+   go run main.go
+   
+   # WebView version (standalone GUI)
+   export YAFTI_CONF="$(pwd)/yafti.yml" YAFTI_USE_WEBVIEW=true
    go run main.go
    ```
 
-4. Access the web interface at http://localhost:3169
+4. Access the interface
+   - For browser version: http://localhost:3169
+   - For WebView version: The application window will open automatically
 
 ## Configuration
 
@@ -93,6 +107,19 @@ just templ
 
 # Install dependencies
 just deps
+```
+
+## Building
+
+```bash
+# Build standard browser-based version
+just build
+
+# Build WebView standalone version
+just build-webview
+
+# Build both versions
+just build-all
 ```
 
 ## Project Structure
