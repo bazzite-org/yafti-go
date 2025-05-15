@@ -18,14 +18,10 @@ FROM alpine:latest
 COPY --from=builder /app/yafti-go /app/yafti-go
 COPY --from=builder /app/yafti.yml /app/yafti.yml
 COPY --from=builder /app/static /app/static
-COPY --from=builder /app/install.sh /app/install.sh
-
-# Make the install script executable
-RUN chmod +x /app/install.sh
 
 # Archive for distribution
 RUN cd /app && \
     tar -czf /yafti-go-bundle.tar.gz \
-    yafti-go yafti.yml static install.sh
+    yafti-go yafti.yml static
 
 # The resulting archive will be at /yafti-go-bundle.tar.gz

@@ -28,8 +28,7 @@ jobs:
 
       - name: Create bundle
         run: |
-          chmod +x install.sh
-          tar -czf yafti-go-bundle.tar.gz yafti-go yafti.yml static install.sh
+          tar -czf yafti-go-bundle.tar.gz yafti-go yafti.yml static
 
       - name: Generate timestamp for tag
         id: timestamp
