@@ -1,5 +1,8 @@
 package components
 
+import "github.com/Zeglius/yafti-go/internal/consts"
+import "strconv"
+
 templ Layout(title string) {
 	<!DOCTYPE html>
 	<html lang="en" data-theme="light">
@@ -90,7 +93,7 @@ templ Layout(title string) {
 					width: 20px;
 					height: 20px;
 				}
-				
+
 				/* Dark theme adjustments */
 				[data-theme="dark"] {
 					--bazzite-bg: #121212;
@@ -100,11 +103,11 @@ templ Layout(title string) {
 					background-color: var(--bazzite-bg);
 					color: var(--bazzite-text);
 				}
-				[data-theme="dark"] h1, 
-				[data-theme="dark"] h2, 
-				[data-theme="dark"] h3, 
-				[data-theme="dark"] h4, 
-				[data-theme="dark"] h5, 
+				[data-theme="dark"] h1,
+				[data-theme="dark"] h2,
+				[data-theme="dark"] h3,
+				[data-theme="dark"] h4,
+				[data-theme="dark"] h5,
 				[data-theme="dark"] h6 {
 					color: #f5f5f7;
 				}
@@ -114,7 +117,7 @@ templ Layout(title string) {
 				[data-theme="dark"] .container {
 					color: #e1e1e1;
 				}
-				[data-theme="dark"] .card, 
+				[data-theme="dark"] .card,
 				[data-theme="dark"] [class*="bg-white"] {
 					background-color: #222 !important;
 				}
@@ -133,7 +136,7 @@ templ Layout(title string) {
 					const savedTheme = localStorage.getItem('theme') || 'light';
 					document.documentElement.setAttribute('data-theme', savedTheme);
 				})();
-				
+
 				// Handle theme toggle using event delegation to work with HTMX
 				document.addEventListener('click', function(event) {
 					// Find if the click was on the theme toggle or any of its children
@@ -147,21 +150,21 @@ templ Layout(title string) {
 						target = target.parentElement;
 					}
 				});
-				
+
 				function toggleTheme() {
 					const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
 					const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-					
+
 					document.documentElement.setAttribute('data-theme', newTheme);
 					localStorage.setItem('theme', newTheme);
-					
+
 					updateThemeIcon(newTheme);
 				}
-				
+
 				function updateThemeIcon(theme) {
 					const moonIcon = document.getElementById('moon-icon');
 					const sunIcon = document.getElementById('sun-icon');
-					
+
 					if (moonIcon && sunIcon) {
 						if (theme === 'dark') {
 							moonIcon.style.display = 'none';
@@ -172,13 +175,13 @@ templ Layout(title string) {
 						}
 					}
 				}
-				
+
 				// Update the theme icon after any HTMX content swap
 				document.addEventListener('htmx:afterSettle', function() {
 					const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
 					updateThemeIcon(currentTheme);
 				});
-				
+
 				// Ensure theme is applied and icons are updated when DOM is ready
 				document.addEventListener('DOMContentLoaded', function() {
 					const savedTheme = localStorage.getItem('theme') || 'light';
@@ -189,11 +192,19 @@ templ Layout(title string) {
 			<title>{ title } | Bazzite Portal</title>
 		</head>
 		<body hx-boost="true">
+			<!-- Trigger a heartbeat to keep the server alive -->
+			<div hidden hx-swap="none">
+				<div
+					hx-get="/_/heartbeat"
+					hx-trigger={ "every " + strconv.Itoa(consts.HEARTBEAT_SECONDS/2) + "s" }
+				></div>
+				<div hx-get="/_/heartbeat" hx-trigger="load"></div>
+			</div>
 			<header class="sticky-header">
 				<nav class="navbar flex justify-between items-center">
 					<div class="logo">
 						<a href="/">
-							<img src="/static/images/logo.png" alt="Bazzite Logo" />
+							<img src="/static/images/logo.png" alt="Bazzite Logo"/>
 						</a>
 					</div>
 					<div class="nav-links flex items-center gap-6">
@@ -202,10 +213,10 @@ templ Layout(title string) {
 						<a href="https://docs.bazzite.gg" target="_blank">Docs</a>
 						<a id="theme-toggle" class="theme-toggle" href="#" aria-label="Toggle theme">
 							<svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
 							</svg>
 							<svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:none;">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
 							</svg>
 						</a>
 					</div>
