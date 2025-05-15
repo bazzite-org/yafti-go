@@ -44,6 +44,8 @@ jobs:
       - name: Build binaries
         run: |
           go mod tidy
+          # Make sure we're using webview_go package
+          go get github.com/webview/webview_go@latest
           go build -o yafti-go -ldflags="-s -w" .
           go build -o yafti-go-webview -ldflags="-s -w" ./cmd/webview
 
@@ -52,7 +54,7 @@ jobs:
         run: echo "timestamp=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
 
       - name: Create and push latest tag
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/build-package'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/build-flatpak'
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
@@ -69,7 +71,7 @@ jobs:
 
       - name: Create release with assets
         uses: softprops/action-gh-release@v1
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/build-package'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/build-flatpak'
         with:
           files: |
             yafti-go

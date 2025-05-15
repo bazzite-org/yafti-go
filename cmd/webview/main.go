@@ -11,7 +11,7 @@ import (
 	"github.com/Zeglius/yafti-go/config"
 	"github.com/Zeglius/yafti-go/internal/consts"
 	srv "github.com/Zeglius/yafti-go/server"
-	"github.com/webview/webview"
+	webview "github.com/webview/webview_go"
 )
 
 //go:embed ../../static/**
@@ -38,7 +38,7 @@ func main() {
 	waitForServer()
 
 	// Create WebView
-	w := webview.New(true)
+	w := webview_go.New(true)
 	defer w.Destroy()
 
 	title := config.ConfStatus.Title
@@ -47,7 +47,7 @@ func main() {
 	}
 
 	w.SetTitle(title)
-	w.SetSize(1024, 768, webview.HintNone)
+	w.SetSize(1024, 768, webview_go.HintNone)
 
 	// Connect to the local server
 	w.Navigate(fmt.Sprintf("http://localhost:%s", consts.PORT))

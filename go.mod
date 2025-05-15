@@ -34,6 +34,6 @@ require (
 	golang.org/x/time v0.8.0 // indirect
 )
 
-require github.com/webview/webview v0.0.0-20250402121000-f1a9d6b6fb8b // indirect
+require github.com/webview/webview_go v0.0.0-20240831120633-6173450d4dd6
 
 tool github.com/a-h/templ/cmd/templ
