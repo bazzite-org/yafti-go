@@ -31,9 +31,16 @@ jobs:
       - name: Install WebView dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev
-          # Verify that the webkit2gtk-4.0.pc file exists
-          pkg-config --exists webkit2gtk-4.0 && echo "webkit2gtk-4.0 found" || echo "webkit2gtk-4.0 NOT found"
+          # Use the available WebKitGTK package names on Ubuntu
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev || sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
+          # Check available webkit packages and their locations
+          apt-cache search libwebkit2gtk
+          # List pkg-config files to find the correct WebKit .pc file
+          find /usr/lib -name "webkit*.pc"
+          # Set PKG_CONFIG_PATH to include all possible locations
+          export PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig"
+          # Check which webkit version is actually installed
+          pkg-config --list-all | grep webkit
 
       - name: Install flatpak-builder
         run: |
@@ -49,12 +56,16 @@ jobs:
           go get github.com/webview/webview_go@latest
           go build -o yafti-go -ldflags="-s -w" .
           
-          # Set PKG_CONFIG_PATH for finding webkit2gtk-4.0
+          # Set PKG_CONFIG_PATH for finding webkit
           export PKG_CONFIG_PATH="/usr/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig"
-          # Force WebView to use webkit2gtk-4.0 instead of trying 4.1
-          pkg-config --cflags -- gtk+-3.0 webkit2gtk-4.0 || true
-          CGO_CFLAGS="`pkg-config --cflags gtk+-3.0 webkit2gtk-4.0`" \
-          CGO_LDFLAGS="`pkg-config --libs gtk+-3.0 webkit2gtk-4.0`" \
+          
+          # Determine which webkit version is available
+          WEBKIT_PKG=$(pkg-config --list-all | grep webkit | head -n 1 | cut -d' ' -f1)
+          echo "Using WebKit package: $WEBKIT_PKG"
+          
+          # Build with the available version
+          CGO_CFLAGS="`pkg-config --cflags gtk+-3.0 $WEBKIT_PKG`" \
+          CGO_LDFLAGS="`pkg-config --libs gtk+-3.0 $WEBKIT_PKG`" \
           go build -o yafti-go-webview -ldflags="-s -w" ./cmd/webview
           
           # Create a wrapper script for the webview binary
