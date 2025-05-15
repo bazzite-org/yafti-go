@@ -5,8 +5,12 @@ on:
     branches:
       - 'main'
       - 'master'
-      - 'build-package'
+      - 'build-permissions'
   workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
 
 jobs:
   build:
