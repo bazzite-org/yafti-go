@@ -294,5 +294,5 @@ func (s *Server) Start() error {
 	// Start server
 	go s.monitorHeartbeat()
 	log.Printf("Server started at http://localhost:%s", consts.PORT)
-	return s.e.Start(":" + consts.PORT)
+	return s.e.Start("127.0.0.1:" + consts.PORT)
 }
