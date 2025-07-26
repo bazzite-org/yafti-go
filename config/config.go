@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"slices"
+	"sync/atomic"
 
 	"github.com/goccy/go-yaml"
 )
@@ -13,9 +14,13 @@ func init() {
 	if err := LoadConfig(); err != nil {
 		log.Panicf("Failed to load config: %v", err)
 	}
+	Inhibit.Store(false)
 }
 
 var ConfStatus *Config
+
+// Disallow closing the server even if heartbeat is not received
+var Inhibit atomic.Bool
 
 // Action represents a toggable script to be executed on the final screen
 type Action struct {
