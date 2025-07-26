@@ -66,7 +66,7 @@ func (s *Server) monitorHeartbeat() {
 			return
 		case <-ticker.C:
 			s.m.Lock()
-			if time.Since(s.lastBeat) > consts.HEARTBEAT_SECONDS*time.Second {
+			if time.Since(s.lastBeat) > consts.HEARTBEAT_SECONDS*time.Second && !config.Inhibit.Load() {
 				log.Printf("No heartbeat for %d seconds, shutting down server\n", consts.HEARTBEAT_SECONDS)
 				s.m.Unlock()
 				s.cancel()
@@ -225,6 +225,9 @@ func (s *Server) Start() error {
 	})
 
 	e.POST("/_/apply_changes", func(c echo.Context) error {
+		// Disable heartbeat while scripts are running
+		config.Inhibit.Store(true)
+
 		// Get script IDs from the request payload
 		type Payload struct {
 			ScriptIds []string `form:"script_ids"`
@@ -264,6 +267,9 @@ func (s *Server) Start() error {
 		handler := newHandler(pages.ApplyChanges(cmds))
 
 		handler.ServeHTTP(c.Response(), c.Request())
+
+		// Enable heartbeat after handler finishes processing the request
+		config.Inhibit.Store(false)
 
 		return nil
 	})
